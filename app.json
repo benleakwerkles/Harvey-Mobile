@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Harvey Mobile",
+    "slug": "harvey-mobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "harvey",
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.werkles.harvey"
+    },
+    "android": {
+      "package": "com.werkles.harvey",
+      "adaptiveIcon": {
+        "backgroundColor": "#08111D"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
