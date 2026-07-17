@@ -7,18 +7,28 @@
     {
       "packet_id": "F_DINK_HARVEY_MOBILE_SANDBOX_CONVERGENCE_20260717",
       "address": "DINK@MEDULLINA",
-      "state": "READY_FOR_PULL"
+      "state": "RECEIPTED",
+      "receipt_path": "docs/flock/receipts/R_DINK_HARVEY_MOBILE_SANDBOX_CONVERGENCE_20260717.md"
     },
     {
       "packet_id": "F_CURSOR_ENDER_HARVEY_MOBILE_BUILD_20260717",
       "address": "CURSOR_ENDER_DOOZER@MEDULLINA",
-      "state": "READY_FOR_PULL"
+      "state": "PARTIAL_INTERNAL_RECEIPT_EXTERNAL_ENDER_BLOCKED_UNBOUND",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_CURSOR_ENDER_HARVEY_MOBILE_BUILD_20260717.md",
+      "blocker_receipt_path": "docs/flock/receipts/R_ENDER_PULL_BLOCKED_UNBOUND_20260717.md"
     },
     {
       "packet_id": "F_BEAN_THUFIR_HARVEY_MOBILE_PROMOTION_GATE_20260717",
       "address": "BEAN_THUFIR@MEDULLINA",
-      "state": "READY_FOR_PULL"
+      "state": "RECEIPTED",
+      "receipt_path": "docs/flock/receipts/R_BEAN_THUFIR_HARVEY_MOBILE_PROMOTION_GATE_20260717.md"
+    },
+    {
+      "packet_id": "F_ENDER_DOOZER_HARVEY_MOBILE_PG_EXECUTION_20260717",
+      "address": "ENDER_DOOZER@MEDULLINA",
+      "state": "READY_FOR_PULL",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_ENDER_DOOZER_HARVEY_MOBILE_PG_EXECUTION_20260717.md"
     }
   ],
-  "proof_boundary": "Packets exist in the sandbox checkpoint. No receiver pull or completion is claimed by this file."
+  "proof_boundary": "Dink and Bean/Thufir returned correlated read-only receipts. An internal Cursor/Ender role-agent returned analysis, but external Ender/Claude reported no connected packet source; external receipt remains blocked and is not claimed."
 }
