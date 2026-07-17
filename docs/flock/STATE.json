@@ -3,6 +3,16 @@
   "project_id": "HARVEY_MOBILE_SANDBOX",
   "branch": "codex/harvey-mobile-vpg-20260717",
   "execution_owner": "CODEX_ROOT",
+  "sandbox_execution": {
+    "state": "SANDBOX_PROVEN",
+    "commit_sha": "4af96e77803b8d571e1cf78ed275b28409c00205",
+    "workflow_run_id": 29605120375,
+    "workflow_conclusion": "success",
+    "artifact_id": 8416542725,
+    "artifact_digest": "fd0c7a1668a2244edb59290c2a2420bb4a7974c13acc935471099dacfb18ff98",
+    "execution_receipt": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_G_20260717.md",
+    "promotion_receipt": "docs/promotion/PROMOTION_RECEIPT_20260717_001.json"
+  },
   "packets": [
     {
       "packet_id": "F_DINK_HARVEY_MOBILE_SANDBOX_CONVERGENCE_20260717",
