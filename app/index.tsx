@@ -3,6 +3,7 @@ import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "rea
 
 import { CommandBoard, type BuildTask } from "../src/components/CommandBoard";
 import { QuickCapture, type SessionCapture } from "../src/components/QuickCapture";
+import { BUILD_IDENTITY } from "../src/data/buildIdentity";
 import { createCaptureDraftReceipt, type CaptureDraftReceipt } from "../src/data/captureDraft";
 import { getProjectSnapshotView, type ProjectSnapshot } from "../src/data/projectSnapshot";
 
@@ -100,7 +101,7 @@ export default function HarveyHome() {
 
         {mode === "Home" ? (
           <>
-            <CommandBoard snapshot={snapshot} tasks={tasks} variant="home" onToggleTask={toggleTask} />
+            <CommandBoard buildIdentity={BUILD_IDENTITY} snapshot={snapshot} tasks={tasks} variant="home" onToggleTask={toggleTask} />
             <View style={styles.stats}>
               <View style={styles.stat}>
                 <Text style={styles.statValue}>{tasks.filter((task) => !task.done).length}</Text>
@@ -115,7 +116,7 @@ export default function HarveyHome() {
         ) : null}
 
         {mode === "Build" ? (
-          <CommandBoard snapshot={snapshot} tasks={tasks} variant="build" onToggleTask={toggleTask} />
+          <CommandBoard buildIdentity={BUILD_IDENTITY} snapshot={snapshot} tasks={tasks} variant="build" onToggleTask={toggleTask} />
         ) : null}
 
         {mode === "Capture" ? (

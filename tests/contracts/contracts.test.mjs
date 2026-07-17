@@ -1,9 +1,14 @@
 import assert from "node:assert/strict";
+import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
 
+import { getBuildIdentity } from "../../src/data/buildIdentity.ts";
 import { createCaptureDraftReceipt } from "../../src/data/captureDraft.ts";
 import { calculateProgress, getProjectSnapshotView } from "../../src/data/projectSnapshot.ts";
 import { validatePromotionReceipt } from "../../scripts/validate-promotion-receipt.mjs";
+import { writeBuildArtifactReceipt } from "../../scripts/write-build-artifact-receipt.mjs";
 
 const snapshot = Object.freeze({
   project: "Werkles",
@@ -11,6 +16,55 @@ const snapshot = Object.freeze({
   sourceSha: "fbfe3f3bf35b6811b32a0efefd79026c9d04affc",
   observedAt: "2026-07-17T18:36:03.000Z",
   truth: "SNAPSHOT_NOT_LIVE",
+});
+
+test("build identity is either fully CI-bound or explicitly local-unbound", () => {
+  assert.deepEqual(getBuildIdentity(undefined), {
+    state: "UNBOUND_LOCAL",
+    sha: null,
+    truthLabel: "BUNDLE TREE SHA · UNBOUND LOCAL",
+  });
+  assert.deepEqual(getBuildIdentity("A".repeat(40)), {
+    state: "CI_BOUND",
+    sha: "a".repeat(40),
+    truthLabel: "BUNDLE TREE SHA · CI BOUND",
+  });
+  for (const invalid of ["main", "a".repeat(39), "g".repeat(40), "a".repeat(41)]) {
+    assert.equal(getBuildIdentity(invalid).state, "UNBOUND_INVALID");
+  }
+});
+
+test("Android and web exports receive the same integrity receipt", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "harvey-artifacts-"));
+  const androidRoot = path.join(root, "android");
+  const webRoot = path.join(root, "web");
+  try {
+    await Promise.all([mkdir(androidRoot), mkdir(path.join(webRoot, "assets"), { recursive: true })]);
+    await Promise.all([
+      writeFile(path.join(androidRoot, "bundle.hbc"), "android"),
+      writeFile(path.join(webRoot, "index.html"), "<html></html>"),
+      writeFile(path.join(webRoot, "assets", "app.js"), "web"),
+    ]);
+    const receipt = await writeBuildArtifactReceipt({
+      androidRoot,
+      webRoot,
+      repository: "benleakwerkles/Harvey-Mobile",
+      eventName: "push",
+      runId: "123",
+      sourceHeadSha: "a".repeat(40),
+      buildTreeSha: "b".repeat(40),
+      baseSha: null,
+    });
+    assert.equal(receipt.truth, "DOWNLOADABLE BUILD ARTIFACT · NOT LIVE");
+    assert.equal(receipt.deployment, false);
+    assert.deepEqual(
+      await readFile(path.join(androidRoot, "HARVEY_ARTIFACT_RECEIPT.json")),
+      await readFile(path.join(webRoot, "HARVEY_ARTIFACT_RECEIPT.json")),
+    );
+    assert.equal(receipt.artifacts[1].files.some((file) => file.path === "index.html"), true);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });
 
 test("snapshot freshness and progress are deterministic", () => {

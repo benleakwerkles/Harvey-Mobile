@@ -19,6 +19,7 @@ npm ci --no-audit --no-fund
 npm run test:contracts
 npm run typecheck
 npm run export:android
+npm run export:web
 ```
 
-There is no configured lint surface. Do not report lint as passed. A green sandbox run proves only the tested sandbox SHA and its uploaded Android export; it does not prove canon, merge, deployment, or receiver delivery.
+There is no configured lint surface. Do not report lint as passed. A green sandbox run proves only the tested sandbox SHA and its uploaded Android and web artifacts; it does not prove live hosting, canon, merge, deployment, or receiver delivery.

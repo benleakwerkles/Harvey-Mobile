@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import type { BuildIdentity } from "../data/buildIdentity";
 import { calculateProgress, type ProjectSnapshotView } from "../data/projectSnapshot";
 
 export type BuildTask = Readonly<{
@@ -10,13 +11,14 @@ export type BuildTask = Readonly<{
 }>;
 
 type CommandBoardProps = Readonly<{
+  buildIdentity: BuildIdentity;
   snapshot: ProjectSnapshotView;
   tasks: readonly BuildTask[];
   variant: "home" | "build";
   onToggleTask: (taskId: string) => void;
 }>;
 
-export function CommandBoard({ snapshot, tasks, variant, onToggleTask }: CommandBoardProps) {
+export function CommandBoard({ buildIdentity, snapshot, tasks, variant, onToggleTask }: CommandBoardProps) {
   const completed = tasks.filter((task) => task.done).length;
   const progress = calculateProgress(tasks);
   const visibleTasks = variant === "home" ? tasks.slice(0, 3) : tasks;
@@ -37,6 +39,20 @@ export function CommandBoard({ snapshot, tasks, variant, onToggleTask }: Command
         <Text style={styles.freshness}>{snapshot.ageDays} DAYS OLD · {snapshot.freshness}</Text>
         <Text style={styles.boundary}>
           Task changes stay in this app session. Reload resets them. No live Werkles connection is claimed.
+        </Text>
+      </View>
+
+      <View style={styles.buildIdentity}>
+        <View style={styles.rowBetween}>
+          <Text style={styles.eyebrow}>CLOUD BUNDLE IDENTITY</Text>
+          <Text style={[styles.buildTruth, buildIdentity.state === "CI_BOUND" && styles.boundTruth]}>
+            {buildIdentity.state === "CI_BOUND" ? "BOUND" : "UNBOUND"}
+          </Text>
+        </View>
+        <Text style={styles.sourceLabel}>{buildIdentity.truthLabel}</Text>
+        <Text selectable style={styles.sha}>{buildIdentity.sha ?? "No CI SHA in this local session"}</Text>
+        <Text style={styles.boundary}>
+          This identifies the exact exported tree only. Source-head and project-state evidence are separate; no deployment is claimed.
         </Text>
       </View>
 
@@ -82,9 +98,12 @@ export function CommandBoard({ snapshot, tasks, variant, onToggleTask }: Command
 
 const styles = StyleSheet.create({
   provenance: { backgroundColor: "#0D1A2A", borderRadius: 20, borderWidth: 1, borderColor: "#20344C", padding: 16, marginTop: 20 },
+  buildIdentity: { backgroundColor: "#0D1A2A", borderRadius: 20, borderWidth: 1, borderColor: "#20344C", padding: 16, marginTop: 12 },
   rowBetween: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 12 },
   eyebrow: { color: "#52D3FF", fontSize: 10, fontWeight: "900", letterSpacing: 1.4 },
   truth: { color: "#FFB45D", fontSize: 9, fontWeight: "900", letterSpacing: 0.7 },
+  buildTruth: { color: "#FFB45D", fontSize: 9, fontWeight: "900", letterSpacing: 0.7 },
+  boundTruth: { color: "#57E39B" },
   sourceLabel: { color: "#8EA0B7", fontSize: 9, fontWeight: "800", letterSpacing: 1.1, marginTop: 13 },
   sourceValue: { color: "#F4F7FB", fontSize: 12, marginTop: 3 },
   sha: { color: "#52D3FF", fontSize: 11, marginTop: 3 },

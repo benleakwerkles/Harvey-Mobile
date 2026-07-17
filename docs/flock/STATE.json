@@ -42,18 +42,21 @@
     {
       "packet_id": "F_DINK_HARVEY_MOBILE_BUILD_IDENTITY_20260717_C2",
       "address": "DINK@MEDULLINA",
-      "state": "READY_FOR_PULL"
+      "state": "RECEIPTED",
+      "receipt_path": "docs/flock/receipts/R_DINK_HARVEY_MOBILE_BUILD_IDENTITY_20260717_C2.md"
     },
     {
       "packet_id": "F_CURSOR_ENDER_HARVEY_MOBILE_CLOUD_PREVIEW_20260717_C2",
       "address": "CURSOR_ENDER_DOOZER@MEDULLINA",
-      "state": "READY_FOR_PULL_INTERNAL_ROLE_AGENT",
-      "external_ender_state": "BLOCKED_UNBOUND"
+      "state": "RECEIPTED_INTERNAL_ROLE_AGENT",
+      "external_ender_state": "BLOCKED_UNBOUND",
+      "receipt_path": "docs/flock/receipts/R_CURSOR_ENDER_HARVEY_MOBILE_CLOUD_PREVIEW_20260717_C2.md"
     },
     {
       "packet_id": "F_BEAN_THUFIR_HARVEY_MOBILE_EVIDENCE_AUDIT_20260717_C2",
       "address": "BEAN_THUFIR@MEDULLINA",
-      "state": "READY_FOR_PULL"
+      "state": "RECEIPTED",
+      "receipt_path": "docs/flock/receipts/R_BEAN_THUFIR_HARVEY_MOBILE_EVIDENCE_AUDIT_20260717_C2.md"
     }
   ],
   "proof_boundary": "Dink and Bean/Thufir returned correlated read-only receipts. An internal Cursor/Ender role-agent returned analysis, but external Ender/Claude reported no connected packet source; external receipt remains blocked and is not claimed."
