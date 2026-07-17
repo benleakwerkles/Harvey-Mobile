@@ -1,33 +1,33 @@
 # Harvey Mobile
 
-Harvey Mobile is the phone-first Harvey / ThinkIT command lane for building and managing Werkles while away from a desktop.
+Harvey Mobile is the phone-first Harvey / ThinkIT command lane for building and managing Werkles away from a desktop.
 
-## Lane
+## Source boundary
 
-- Non Hearthland project
-- Cloud-only GitHub workflow
-- Expo 57, React Native, Expo Router, and TypeScript
-- Designed for fast capture and build movement from a phone
+- Sandbox: `benleakwerkles/Harvey-Mobile`
+- Canon: `benleakwerkles/Werkles/Harvey/Werkles Mobile/`
+- This Expo 57 / Expo Router repository is where construction and cloud proof occur.
+- Canon receives reviewed behavior ports only after an explicit, receipt-backed promotion gate.
 
-## First working slice
+## Current slice
 
-- Werkles project status and progress
-- tappable build queue
-- session-based quick capture
-- clear Non Hearthland labeling
-- phone-first dark interface
+- provenance-backed Werkles command board labeled `SNAPSHOT · NOT LIVE`
+- session-only build queue whose changes reset on reload
+- secret-safe quick capture with `LOCAL_DRAFT_NOT_DISPATCHED` receipts
+- Flock packets and receipts that distinguish dispatch from receiver proof
+- deterministic contracts, typecheck, and Android export in GitHub Actions
+
+Quick-capture raw text stays only in the current app session. Its receipt contains counts and proof state, never the raw note. Nothing is saved to cloud or dispatched.
 
 ## Run
 
-    npm install
-    npm start
+```text
+npm ci --no-audit --no-fund
+npm run test:contracts
+npm run typecheck
+npm run web
+```
 
-Open the QR code in Expo Go, or use npm run web.
+Android cloud proof uses `npm run export:android`. No simulator is required. There is no configured lint command, so lint is not claimed.
 
-## Next
-
-1. Persist captures securely.
-2. Connect the Werkles project feed.
-3. Add guarded GitHub actions.
-4. Add voice capture and Harvey-assisted build instructions.
-5. Establish mobile authentication without placing credentials in the repository.
+See `docs/promotion/HARVEY_MOBILE_PROMOTION_MAP.md` before proposing any canon change.

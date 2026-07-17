@@ -1,11 +1,24 @@
-# Harvey Mobile
+# Harvey Mobile sandbox
 
-Phone-first Expo / React Native app (Expo Router + TypeScript) for building and managing Werkles. See `README.md` for the product overview.
+This repository is the cloud build sandbox for Harvey Mobile. Canon remains `benleakwerkles/Werkles/Harvey/Werkles Mobile/`.
 
-## Cursor Cloud specific instructions
+## Working law
 
-- This is a single Expo app. Node 22 is used (CI pins `22.13.0`). Dependencies are installed via `npm install`.
-- There is no lint or test suite. The only static check is `npm run typecheck` (`tsc --noEmit`), which is also what CI (`.github/workflows/verify.yml`) runs on every push/PR. Run it before considering changes done.
-- To run and manually test in the cloud VM (no device/emulator available), use web mode: `npm run web`. This starts the Metro bundler on `http://localhost:8081`. The first page load takes ~10-30s while Metro bundles; subsequent loads are fast.
-- The app is UI-only with in-memory React state (tasks and captured notes). Nothing is persisted, so a page reload resets all state — this is expected, not a bug.
-- Standard mobile commands `npm run ios` / `npm run android` require a simulator/emulator and are not usable in the cloud VM; prefer `npm run web` for verification.
+- Build and test here; promote only reviewed behavior into canon through a receipt-backed human gate.
+- Do not copy this Expo 57 manifest, lockfile, Expo Router scaffold, workflow, or whole folders into the Expo 51 canon app.
+- Never use Courtney repositories or folders for Harvey work.
+- No secrets, credentials, customer data, live-delivery claims, or persistence claims.
+- Raw quick-capture text is current-session only and must never enter a receipt.
+
+## Verification
+
+Node 22 is used in CI. The reproducible gate is:
+
+```text
+npm ci --no-audit --no-fund
+npm run test:contracts
+npm run typecheck
+npm run export:android
+```
+
+There is no configured lint surface. Do not report lint as passed. A green sandbox run proves only the tested sandbox SHA and its uploaded Android export; it does not prove canon, merge, deployment, or receiver delivery.
