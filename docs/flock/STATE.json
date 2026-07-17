@@ -13,6 +13,31 @@
     "execution_receipt": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_G_20260717.md",
     "promotion_receipt": "docs/promotion/PROMOTION_RECEIPT_20260717_001.json"
   },
+  "cycle_two_execution": {
+    "state": "SANDBOX_G_RECEIPTED",
+    "implementation_sha": "8c6f8f78d3cd6202e41a2f7f348e5175343b822b",
+    "push_run_id": 29618004815,
+    "push_run_conclusion": "success",
+    "pr_run_id": 29618006967,
+    "pr_run_conclusion": "success",
+    "android_artifact": {
+      "id": 8421192040,
+      "name": "harvey-mobile-android-8c6f8f78d3cd6202e41a2f7f348e5175343b822b",
+      "digest": "sha256:11ac1fed846d0329402caca07d2ef2f1b6bb2851e2a702e3590b2641a0e07342"
+    },
+    "web_artifact": {
+      "id": 8421192234,
+      "name": "harvey-mobile-web-8c6f8f78d3cd6202e41a2f7f348e5175343b822b",
+      "digest": "sha256:7357c07f45c50688043caaa41cda856b1905015511035df83b7bc94052bd4ad1",
+      "truth": "DOWNLOADABLE_BUILD_ARTIFACT_NOT_LIVE"
+    },
+    "external_ender_state": "BLOCKED_UNBOUND",
+    "promotion_approval": "PENDING",
+    "canon_written": false,
+    "merged": false,
+    "deployed": false,
+    "execution_receipt": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_G_20260717_C2.md"
+  },
   "packets": [
     {
       "packet_id": "F_DINK_HARVEY_MOBILE_SANDBOX_CONVERGENCE_20260717",
@@ -59,5 +84,5 @@
       "receipt_path": "docs/flock/receipts/R_BEAN_THUFIR_HARVEY_MOBILE_EVIDENCE_AUDIT_20260717_C2.md"
     }
   ],
-  "proof_boundary": "Dink and Bean/Thufir returned correlated read-only receipts. An internal Cursor/Ender role-agent returned analysis, but external Ender/Claude reported no connected packet source; external receipt remains blocked and is not claimed."
+  "proof_boundary": "Cycle-two Dink and Bean/Thufir pulls are receipted. Internal Cursor/Ender role-agent analysis is receipted separately from external Ender/Claude, which remains BLOCKED_UNBOUND. Green sandbox artifacts prove neither canon, merge, deployment, hosting, nor receiver delivery."
 }
