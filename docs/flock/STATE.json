@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "project_id": "HARVEY_MOBILE_SANDBOX",
+  "branch": "codex/harvey-mobile-vpg-20260717",
+  "execution_owner": "CODEX_ROOT",
+  "packets": [
+    {
+      "packet_id": "F_DINK_HARVEY_MOBILE_SANDBOX_CONVERGENCE_20260717",
+      "address": "DINK@MEDULLINA",
+      "state": "READY_FOR_PULL"
+    },
+    {
+      "packet_id": "F_CURSOR_ENDER_HARVEY_MOBILE_BUILD_20260717",
+      "address": "CURSOR_ENDER_DOOZER@MEDULLINA",
+      "state": "READY_FOR_PULL"
+    },
+    {
+      "packet_id": "F_BEAN_THUFIR_HARVEY_MOBILE_PROMOTION_GATE_20260717",
+      "address": "BEAN_THUFIR@MEDULLINA",
+      "state": "READY_FOR_PULL"
+    }
+  ],
+  "proof_boundary": "Packets exist in the sandbox checkpoint. No receiver pull or completion is claimed by this file."
+}
