@@ -82,7 +82,35 @@
       "address": "BEAN_THUFIR@MEDULLINA",
       "state": "RECEIPTED",
       "receipt_path": "docs/flock/receipts/R_BEAN_THUFIR_HARVEY_MOBILE_EVIDENCE_AUDIT_20260717_C2.md"
+    },
+    {
+      "packet_id": "F_DINK_HARVEY_MOBILE_RELAY_SURFACE_20260717_C3",
+      "address": "DINK@MEDULLINA",
+      "state": "READY_FOR_PULL",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_DINK_HARVEY_MOBILE_RELAY_SURFACE_20260717_C3.md"
+    },
+    {
+      "packet_id": "F_CURSOR_ENDER_HARVEY_MOBILE_RELAY_UX_20260717_C3",
+      "address": "CURSOR_ENDER_DOOZER@MEDULLINA",
+      "state": "READY_FOR_PULL_INTERNAL_ROLE_AGENT",
+      "external_ender_state": "BLOCKED_UNBOUND",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_CURSOR_ENDER_HARVEY_MOBILE_RELAY_UX_20260717_C3.md"
+    },
+    {
+      "packet_id": "F_BEAN_THUFIR_HARVEY_MOBILE_RELAY_AUDIT_20260717_C3",
+      "address": "BEAN_THUFIR@MEDULLINA",
+      "state": "READY_FOR_PULL",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_BEAN_THUFIR_HARVEY_MOBILE_RELAY_AUDIT_20260717_C3.md"
     }
   ],
-  "proof_boundary": "Cycle-two Dink and Bean/Thufir pulls are receipted. Internal Cursor/Ender role-agent analysis is receipted separately from external Ender/Claude, which remains BLOCKED_UNBOUND. Green sandbox artifacts prove neither canon, merge, deployment, hosting, nor receiver delivery."
+  "proof_boundary": "Cycle-three cloud-only packets are published for Dink, the internal Cursor/Ender role agent, and Bean/Thufir. Real external Ender/Claude remains BLOCKED_UNBOUND. Green sandbox artifacts prove neither canon, merge, deployment, hosting, nor receiver delivery.",
+  "cycle_three": {
+    "state": "V_PUBLISHED",
+    "base_sha": "04178edefaa7d555757abd298070ec559771b4fc",
+    "work_mode": "CLOUD_ONLY",
+    "execution_owner": "CODEX_ROOT",
+    "canon_written": false,
+    "merged": false,
+    "deployed": false
+  }
 }
