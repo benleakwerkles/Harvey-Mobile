@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "receipt_id": "PROMOTION_HARVEY_MOBILE_<YYYYMMDD>_<NNN>",
+  "state": "PREPARED",
+  "sandbox_sha": "<40-character-tested-sandbox-sha>",
+  "canon_base_sha": "31946157695fc6c442f89fa8b52540bf5e19fe1e",
+  "canon_candidate_sha": null,
+  "sandbox_run": null,
+  "canon_run": null,
+  "file_map": [
+    {
+      "sandbox_source": "<repo-relative-source>",
+      "canon_destination": "Harvey/Werkles Mobile/<confined-destination>",
+      "source_sha256": "<64-character-source-digest>"
+    }
+  ],
+  "truth_labels": {
+    "sandbox_built": false,
+    "sandbox_tested": false,
+    "promotion_approved": false,
+    "canon_written": false,
+    "canon_tested": false,
+    "merged": false,
+    "deployed": false
+  },
+  "approval": {
+    "state": "PENDING",
+    "bound_receipt_digest": null
+  }
+}

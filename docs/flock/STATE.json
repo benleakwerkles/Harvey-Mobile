@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "project_id": "HARVEY_MOBILE_SANDBOX",
+  "branch": "codex/harvey-mobile-vpg-20260717",
+  "execution_owner": "CODEX_ROOT",
+  "sandbox_execution": {
+    "state": "SANDBOX_PROVEN",
+    "commit_sha": "4af96e77803b8d571e1cf78ed275b28409c00205",
+    "workflow_run_id": 29605120375,
+    "workflow_conclusion": "success",
+    "artifact_id": 8416542725,
+    "artifact_digest": "fd0c7a1668a2244edb59290c2a2420bb4a7974c13acc935471099dacfb18ff98",
+    "execution_receipt": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_G_20260717.md",
+    "promotion_receipt": "docs/promotion/PROMOTION_RECEIPT_20260717_001.json"
+  },
+  "cycle_two_execution": {
+    "state": "SANDBOX_G_RECEIPTED",
+    "implementation_sha": "8c6f8f78d3cd6202e41a2f7f348e5175343b822b",
+    "push_run_id": 29618004815,
+    "push_run_conclusion": "success",
+    "pr_run_id": 29618006967,
+    "pr_run_conclusion": "success",
+    "android_artifact": {
+      "id": 8421192040,
+      "name": "harvey-mobile-android-8c6f8f78d3cd6202e41a2f7f348e5175343b822b",
+      "digest": "sha256:11ac1fed846d0329402caca07d2ef2f1b6bb2851e2a702e3590b2641a0e07342"
+    },
+    "web_artifact": {
+      "id": 8421192234,
+      "name": "harvey-mobile-web-8c6f8f78d3cd6202e41a2f7f348e5175343b822b",
+      "digest": "sha256:7357c07f45c50688043caaa41cda856b1905015511035df83b7bc94052bd4ad1",
+      "truth": "DOWNLOADABLE_BUILD_ARTIFACT_NOT_LIVE"
+    },
+    "external_ender_state": "BLOCKED_UNBOUND",
+    "promotion_approval": "PENDING",
+    "canon_written": false,
+    "merged": false,
+    "deployed": false,
+    "execution_receipt": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_G_20260717_C2.md"
+  },
+  "packets": [
+    {
+      "packet_id": "F_DINK_HARVEY_MOBILE_SANDBOX_CONVERGENCE_20260717",
+      "address": "DINK@MEDULLINA",
+      "state": "RECEIPTED",
+      "receipt_path": "docs/flock/receipts/R_DINK_HARVEY_MOBILE_SANDBOX_CONVERGENCE_20260717.md"
+    },
+    {
+      "packet_id": "F_CURSOR_ENDER_HARVEY_MOBILE_BUILD_20260717",
+      "address": "CURSOR_ENDER_DOOZER@MEDULLINA",
+      "state": "PARTIAL_INTERNAL_RECEIPT_EXTERNAL_ENDER_BLOCKED_UNBOUND",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_CURSOR_ENDER_HARVEY_MOBILE_BUILD_20260717.md",
+      "blocker_receipt_path": "docs/flock/receipts/R_ENDER_PULL_BLOCKED_UNBOUND_20260717.md"
+    },
+    {
+      "packet_id": "F_BEAN_THUFIR_HARVEY_MOBILE_PROMOTION_GATE_20260717",
+      "address": "BEAN_THUFIR@MEDULLINA",
+      "state": "RECEIPTED",
+      "receipt_path": "docs/flock/receipts/R_BEAN_THUFIR_HARVEY_MOBILE_PROMOTION_GATE_20260717.md"
+    },
+    {
+      "packet_id": "F_ENDER_DOOZER_HARVEY_MOBILE_PG_EXECUTION_20260717",
+      "address": "ENDER_DOOZER@MEDULLINA",
+      "state": "READY_FOR_PULL",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_ENDER_DOOZER_HARVEY_MOBILE_PG_EXECUTION_20260717.md"
+    },
+    {
+      "packet_id": "F_DINK_HARVEY_MOBILE_BUILD_IDENTITY_20260717_C2",
+      "address": "DINK@MEDULLINA",
+      "state": "RECEIPTED",
+      "receipt_path": "docs/flock/receipts/R_DINK_HARVEY_MOBILE_BUILD_IDENTITY_20260717_C2.md"
+    },
+    {
+      "packet_id": "F_CURSOR_ENDER_HARVEY_MOBILE_CLOUD_PREVIEW_20260717_C2",
+      "address": "CURSOR_ENDER_DOOZER@MEDULLINA",
+      "state": "RECEIPTED_INTERNAL_ROLE_AGENT",
+      "external_ender_state": "BLOCKED_UNBOUND",
+      "receipt_path": "docs/flock/receipts/R_CURSOR_ENDER_HARVEY_MOBILE_CLOUD_PREVIEW_20260717_C2.md"
+    },
+    {
+      "packet_id": "F_BEAN_THUFIR_HARVEY_MOBILE_EVIDENCE_AUDIT_20260717_C2",
+      "address": "BEAN_THUFIR@MEDULLINA",
+      "state": "RECEIPTED",
+      "receipt_path": "docs/flock/receipts/R_BEAN_THUFIR_HARVEY_MOBILE_EVIDENCE_AUDIT_20260717_C2.md"
+    },
+    {
+      "packet_id": "F_DINK_HARVEY_MOBILE_RELAY_SURFACE_20260717_C3",
+      "address": "DINK@MEDULLINA",
+      "state": "RECEIPTED",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_DINK_HARVEY_MOBILE_RELAY_SURFACE_20260717_C3.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260717_C3.md"
+    },
+    {
+      "packet_id": "F_CURSOR_ENDER_HARVEY_MOBILE_RELAY_UX_20260717_C3",
+      "address": "CURSOR_ENDER_DOOZER@MEDULLINA",
+      "state": "RECEIPTED_INTERNAL_ROLE_AGENT",
+      "external_ender_state": "BLOCKED_UNBOUND",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_CURSOR_ENDER_HARVEY_MOBILE_RELAY_UX_20260717_C3.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260717_C3.md"
+    },
+    {
+      "packet_id": "F_BEAN_THUFIR_HARVEY_MOBILE_RELAY_AUDIT_20260717_C3",
+      "address": "BEAN_THUFIR@MEDULLINA",
+      "state": "RECEIPTED",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_BEAN_THUFIR_HARVEY_MOBILE_RELAY_AUDIT_20260717_C3.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260717_C3.md"
+    }
+  ],
+  "proof_boundary": "Cycle-three V/P/G is receipted with cloud-only implementation and successful SHA-scoped sandbox artifacts. Real external Ender/Claude remains BLOCKED_UNBOUND. These receipts prove neither canon, merge, deployment, hosting, post-expiry artifact availability, nor receiver delivery.",
+  "cycle_three": {
+    "state": "SANDBOX_G_RECEIPTED",
+    "v_checkpoint_sha": "91d9cfbe5b3b9a6ba390382d51183277bf5b5ce9",
+    "implementation_sha": "ef32ce6652a2d7598dd894853e0a612a9a0bacaa",
+    "work_mode": "CLOUD_ONLY",
+    "execution_owner": "CODEX_ROOT",
+    "pr_run_id": 29624052876,
+    "pr_run_conclusion": "success",
+    "pr_build_tree_sha": "04e836eb6aba1c64d1ed146312d430db3cee8095",
+    "android_artifact": {
+      "id": 8423220296,
+      "digest": "sha256:940a6668f2eb90268020725a9c22c982c6fa0c7e46cacb8cfa8f833edb9c565a",
+      "expires_at": "2026-07-25T00:53:45Z"
+    },
+    "web_artifact": {
+      "id": 8423220550,
+      "digest": "sha256:f7e85994c6e615fd1f5c99fcb2a6979cbb141ee65dc399a605ee3e7af4bf0d0d",
+      "expires_at": "2026-07-25T00:53:46Z"
+    },
+    "external_ender_state": "BLOCKED_UNBOUND",
+    "promotion_approval": "PENDING",
+    "canon_written": false,
+    "merged": false,
+    "deployed": false,
+    "execution_receipt": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260717_C3.md"
+  }
+}

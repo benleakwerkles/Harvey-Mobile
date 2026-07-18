@@ -2,19 +2,69 @@ name: Verify mobile app
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - "codex/**"
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  typecheck:
+  verify:
+    name: Contracts, typecheck, and cloud exports
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version: 22.13.0
-      - run: npm install
-      - run: npm run typecheck
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Run behavior contracts
+        run: npm run test:contracts
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Bind source and build identities
+        id: identity
+        env:
+          SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
+        run: |
+          BUILD_TREE_SHA="$(git rev-parse HEAD)"
+          [[ "${SOURCE_HEAD_SHA}" =~ ^[0-9a-f]{40}$ ]]
+          [[ "${BUILD_TREE_SHA}" =~ ^[0-9a-f]{40}$ ]]
+          if [[ -n "${BASE_SHA}" ]]; then [[ "${BASE_SHA}" =~ ^[0-9a-f]{40}$ ]]; fi
+          echo "source_head_sha=${SOURCE_HEAD_SHA}" >> "${GITHUB_OUTPUT}"
+          echo "build_tree_sha=${BUILD_TREE_SHA}" >> "${GITHUB_OUTPUT}"
+          echo "SOURCE_HEAD_SHA=${SOURCE_HEAD_SHA}" >> "${GITHUB_ENV}"
+          echo "BUILD_TREE_SHA=${BUILD_TREE_SHA}" >> "${GITHUB_ENV}"
+          echo "BASE_SHA=${BASE_SHA}" >> "${GITHUB_ENV}"
+          echo "EXPO_PUBLIC_HARVEY_BUILD_SHA=${BUILD_TREE_SHA}" >> "${GITHUB_ENV}"
+      - name: Export Android bundle
+        run: npm run export:android
+      - name: Export web bundle
+        run: npm run export:web
+      - name: Verify bundle identity binding
+        run: |
+          test -f dist/web/index.html
+          grep -R --fixed-strings "${BUILD_TREE_SHA}" dist/android >/dev/null
+          grep -R --fixed-strings "${BUILD_TREE_SHA}" dist/web >/dev/null
+      - name: Write identical artifact receipts
+        run: node scripts/write-build-artifact-receipt.mjs
+      - name: Upload SHA-bound Android export
+        uses: actions/upload-artifact@v4
+        with:
+          name: harvey-mobile-android-${{ steps.identity.outputs.build_tree_sha }}
+          path: dist/android
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload SHA-bound web export
+        uses: actions/upload-artifact@v4
+        with:
+          name: harvey-mobile-web-${{ steps.identity.outputs.build_tree_sha }}
+          path: dist/web
+          if-no-files-found: error
+          retention-days: 7

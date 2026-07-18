@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "receipt_id": "PROMOTION_HARVEY_MOBILE_20260717_001",
+  "state": "SANDBOX_PROVEN",
+  "sandbox_sha": "4af96e77803b8d571e1cf78ed275b28409c00205",
+  "canon_base_sha": "31946157695fc6c442f89fa8b52540bf5e19fe1e",
+  "canon_candidate_sha": null,
+  "sandbox_run": {
+    "id": 29605120375,
+    "url": "https://github.com/benleakwerkles/Harvey-Mobile/actions/runs/29605120375",
+    "conclusion": "success",
+    "artifact_id": 8416542725,
+    "artifact_name": "harvey-mobile-android-4af96e77803b8d571e1cf78ed275b28409c00205",
+    "artifact_digest": "fd0c7a1668a2244edb59290c2a2420bb4a7974c13acc935471099dacfb18ff98"
+  },
+  "canon_run": null,
+  "file_map": [
+    {
+      "sandbox_source": "src/data/projectSnapshot.ts",
+      "canon_destination": "Harvey/Werkles Mobile/mobile-app/src/data/projectSnapshot.ts",
+      "source_sha256": "71822a83edde7eb8bdcec17b86a54ff0d3ad77e357c1a5c78d9cc82323f1a0b6"
+    },
+    {
+      "sandbox_source": "src/components/CommandBoard.tsx",
+      "canon_destination": "Harvey/Werkles Mobile/mobile-app/src/screens/DashboardScreen.tsx",
+      "source_sha256": "e858cb675d4f21da94d22e7529a5672449d35a9d44a8dea43750b32ab5434e5f"
+    },
+    {
+      "sandbox_source": "src/data/captureDraft.ts",
+      "canon_destination": "Harvey/Werkles Mobile/mobile-app/src/data/captureDraft.ts",
+      "source_sha256": "c34ec1a16ee415707f1f70db7583b46c440e50e5d089e1042df779f07fb123c2"
+    },
+    {
+      "sandbox_source": "src/components/QuickCapture.tsx",
+      "canon_destination": "Harvey/Werkles Mobile/mobile-app/src/screens/DuckScreen.tsx",
+      "source_sha256": "578e0a6837be676e5760d8f1d77baff67565e021448053894cf08ed50fd17b11"
+    },
+    {
+      "sandbox_source": "tests/contracts/contracts.test.mjs",
+      "canon_destination": "Harvey/Werkles Mobile/mobile-app/src/data/contracts.test.ts",
+      "source_sha256": "2834689c3292a8353e30c07db9beab0d9af93959927dcd0db08cc79d3fb566a4"
+    }
+  ],
+  "truth_labels": {
+    "sandbox_built": true,
+    "sandbox_tested": true,
+    "promotion_approved": false,
+    "canon_written": false,
+    "canon_tested": false,
+    "merged": false,
+    "deployed": false
+  },
+  "approval": {
+    "state": "PENDING",
+    "bound_receipt_digest": null
+  }
+}

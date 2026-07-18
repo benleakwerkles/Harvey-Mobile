@@ -8,7 +8,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "typecheck": "tsc --noEmit"
+    "test:contracts": "node --experimental-strip-types --test tests/contracts/contracts.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "export:android": "expo export --platform android --output-dir dist/android",
+    "export:web": "expo export --platform web --output-dir dist/web"
   },
   "dependencies": {
     "expo": "~57.0.4",
