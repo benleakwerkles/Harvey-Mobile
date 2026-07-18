@@ -86,31 +86,51 @@
     {
       "packet_id": "F_DINK_HARVEY_MOBILE_RELAY_SURFACE_20260717_C3",
       "address": "DINK@MEDULLINA",
-      "state": "READY_FOR_PULL",
-      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_DINK_HARVEY_MOBILE_RELAY_SURFACE_20260717_C3.md"
+      "state": "RECEIPTED",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_DINK_HARVEY_MOBILE_RELAY_SURFACE_20260717_C3.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260717_C3.md"
     },
     {
       "packet_id": "F_CURSOR_ENDER_HARVEY_MOBILE_RELAY_UX_20260717_C3",
       "address": "CURSOR_ENDER_DOOZER@MEDULLINA",
-      "state": "READY_FOR_PULL_INTERNAL_ROLE_AGENT",
+      "state": "RECEIPTED_INTERNAL_ROLE_AGENT",
       "external_ender_state": "BLOCKED_UNBOUND",
-      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_CURSOR_ENDER_HARVEY_MOBILE_RELAY_UX_20260717_C3.md"
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_CURSOR_ENDER_HARVEY_MOBILE_RELAY_UX_20260717_C3.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260717_C3.md"
     },
     {
       "packet_id": "F_BEAN_THUFIR_HARVEY_MOBILE_RELAY_AUDIT_20260717_C3",
       "address": "BEAN_THUFIR@MEDULLINA",
-      "state": "READY_FOR_PULL",
-      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_BEAN_THUFIR_HARVEY_MOBILE_RELAY_AUDIT_20260717_C3.md"
+      "state": "RECEIPTED",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260717/docs/flock/packets/F_BEAN_THUFIR_HARVEY_MOBILE_RELAY_AUDIT_20260717_C3.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260717_C3.md"
     }
   ],
-  "proof_boundary": "Cycle-three cloud-only packets are published for Dink, the internal Cursor/Ender role agent, and Bean/Thufir. Real external Ender/Claude remains BLOCKED_UNBOUND. Green sandbox artifacts prove neither canon, merge, deployment, hosting, nor receiver delivery.",
+  "proof_boundary": "Cycle-three V/P/G is receipted with cloud-only implementation and successful SHA-scoped sandbox artifacts. Real external Ender/Claude remains BLOCKED_UNBOUND. These receipts prove neither canon, merge, deployment, hosting, post-expiry artifact availability, nor receiver delivery.",
   "cycle_three": {
-    "state": "V_PUBLISHED",
-    "base_sha": "04178edefaa7d555757abd298070ec559771b4fc",
+    "state": "SANDBOX_G_RECEIPTED",
+    "v_checkpoint_sha": "91d9cfbe5b3b9a6ba390382d51183277bf5b5ce9",
+    "implementation_sha": "ef32ce6652a2d7598dd894853e0a612a9a0bacaa",
     "work_mode": "CLOUD_ONLY",
     "execution_owner": "CODEX_ROOT",
+    "pr_run_id": 29624052876,
+    "pr_run_conclusion": "success",
+    "pr_build_tree_sha": "04e836eb6aba1c64d1ed146312d430db3cee8095",
+    "android_artifact": {
+      "id": 8423220296,
+      "digest": "sha256:940a6668f2eb90268020725a9c22c982c6fa0c7e46cacb8cfa8f833edb9c565a",
+      "expires_at": "2026-07-25T00:53:45Z"
+    },
+    "web_artifact": {
+      "id": 8423220550,
+      "digest": "sha256:f7e85994c6e615fd1f5c99fcb2a6979cbb141ee65dc399a605ee3e7af4bf0d0d",
+      "expires_at": "2026-07-25T00:53:46Z"
+    },
+    "external_ender_state": "BLOCKED_UNBOUND",
+    "promotion_approval": "PENDING",
     "canon_written": false,
     "merged": false,
-    "deployed": false
+    "deployed": false,
+    "execution_receipt": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260717_C3.md"
   }
 }
