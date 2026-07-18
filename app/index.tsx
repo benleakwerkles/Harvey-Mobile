@@ -2,14 +2,17 @@ import { useMemo, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { CommandBoard, type BuildTask } from "../src/components/CommandBoard";
+import { EvidenceHub } from "../src/components/EvidenceHub";
 import { QuickCapture, type SessionCapture } from "../src/components/QuickCapture";
 import { BUILD_IDENTITY } from "../src/data/buildIdentity";
+import { CLOUD_PROOF_SNAPSHOT, getCloudProofView } from "../src/data/cloudProofSnapshot";
+import { FLOCK_RELAY_SNAPSHOT, getFlockRelayView } from "../src/data/flockRelaySnapshot";
 import { createCaptureDraftReceipt, type CaptureDraftReceipt } from "../src/data/captureDraft";
 import { getProjectSnapshotView, type ProjectSnapshot } from "../src/data/projectSnapshot";
 
-type Mode = "Home" | "Build" | "Capture";
+type Mode = "Home" | "Build" | "Capture" | "Evidence";
 
-const MODES = ["Home", "Build", "Capture"] as const;
+const MODES = ["Home", "Build", "Capture", "Evidence"] as const;
 
 const SNAPSHOT: ProjectSnapshot = Object.freeze({
   project: "Werkles",
@@ -34,6 +37,8 @@ export default function HarveyHome() {
   const [receipt, setReceipt] = useState<CaptureDraftReceipt | null>(null);
   const [captureError, setCaptureError] = useState<string | null>(null);
   const snapshot = useMemo(() => getProjectSnapshotView(SNAPSHOT, new Date()), []);
+  const relay = useMemo(() => getFlockRelayView(FLOCK_RELAY_SNAPSHOT, new Date()), []);
+  const cloudProof = useMemo(() => getCloudProofView(CLOUD_PROOF_SNAPSHOT), []);
 
   const toggleTask = (taskId: string) => {
     setTasks((current) =>
@@ -129,6 +134,10 @@ export default function HarveyHome() {
             onDraftChange={changeDraft}
             receipt={receipt}
           />
+        ) : null}
+
+        {mode === "Evidence" ? (
+          <EvidenceHub buildIdentity={BUILD_IDENTITY} cloudProof={cloudProof} relay={relay} />
         ) : null}
 
         <Text style={styles.footer}>SANDBOX · BENLEAKWERKLES/HARVEY-MOBILE · NOT CANON</Text>
