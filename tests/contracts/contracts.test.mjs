@@ -5,6 +5,8 @@ import path from "node:path";
 import test from "node:test";
 
 import { getBuildIdentity } from "../../src/data/buildIdentity.ts";
+import { CLOUD_PROOF_SNAPSHOT, compareBundleToProof, getCloudProofView } from "../../src/data/cloudProofSnapshot.ts";
+import { FLOCK_RELAY_SNAPSHOT, getFlockRelayView } from "../../src/data/flockRelaySnapshot.ts";
 import { createCaptureDraftReceipt } from "../../src/data/captureDraft.ts";
 import { calculateProgress, getProjectSnapshotView } from "../../src/data/projectSnapshot.ts";
 import { validatePromotionReceipt } from "../../scripts/validate-promotion-receipt.mjs";
@@ -124,6 +126,87 @@ test("capture rejects blank, oversized, secret-shaped, and embedded credentials"
   ];
   rejected.forEach((candidate) => assert.equal(createCaptureDraftReceipt(candidate, now).ok, false));
   assert.equal(createCaptureDraftReceipt("please schedule token cleanup", now).ok, true);
+});
+
+
+test("relay snapshot stays immutable, ordered, and externally blocked", () => {
+  const view = getFlockRelayView(FLOCK_RELAY_SNAPSHOT, new Date("2026-07-18T00:45:01.000Z"));
+  assert.equal(view.readyCount, 3);
+  assert.equal(view.receiptedCount, 0);
+  assert.equal(view.externalEnderState, "BLOCKED_UNBOUND");
+  assert.deepEqual(
+    view.packets.map((packet) => packet.packetId),
+    [
+      "F_DINK_HARVEY_MOBILE_RELAY_SURFACE_20260717_C3",
+      "F_CURSOR_ENDER_HARVEY_MOBILE_RELAY_UX_20260717_C3",
+      "F_BEAN_THUFIR_HARVEY_MOBILE_RELAY_AUDIT_20260717_C3",
+    ],
+  );
+
+  assert.throws(
+    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, sourcePath: "../STATE.json" }, new Date("2026-07-18T00:45:01.000Z")),
+    /repository-relative/,
+  );
+  assert.throws(
+    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, externalEnderState: "DELIVERED" }, new Date("2026-07-18T00:45:01.000Z")),
+    /receiver proof/,
+  );
+  assert.throws(
+    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, packets: [...FLOCK_RELAY_SNAPSHOT.packets, FLOCK_RELAY_SNAPSHOT.packets[0]] }, new Date("2026-07-18T00:45:01.000Z")),
+    /unique/,
+  );
+});
+
+test("internal role receipts cannot become external delivery", () => {
+  const internalReceipt = {
+    ...FLOCK_RELAY_SNAPSHOT.packets[1],
+    state: "RECEIPTED_INTERNAL_ROLE_AGENT",
+  };
+  const view = getFlockRelayView(
+    { ...FLOCK_RELAY_SNAPSHOT, packets: [internalReceipt] },
+    new Date("2026-07-18T00:45:01.000Z"),
+  );
+  assert.equal(view.receiptedCount, 1);
+  assert.equal(view.externalEnderState, "BLOCKED_UNBOUND");
+  assert.throws(
+    () => getFlockRelayView(
+      { ...FLOCK_RELAY_SNAPSHOT, packets: [{ ...internalReceipt, internalRoleAgent: false }] },
+      new Date("2026-07-18T00:45:01.000Z"),
+    ),
+    /explicitly internal/,
+  );
+});
+
+test("cloud proof is run, SHA, artifact, and truth bound", () => {
+  const view = getCloudProofView(CLOUD_PROOF_SNAPSHOT);
+  assert.equal(view.evidenceState, "PROVEN_HISTORICAL");
+  assert.deepEqual(view.boundaryLabels, [
+    "NOT LIVE",
+    "NOT HOSTED",
+    "NOT CANONICAL",
+    "NOT MERGED",
+    "NOT DEPLOYED",
+  ]);
+  assert.equal(
+    compareBundleToProof(getBuildIdentity("8c6f8f78d3cd6202e41a2f7f348e5175343b822b"), view),
+    "SHA MATCH · RECEIPT APPLIES TO THIS BUNDLE",
+  );
+  assert.equal(
+    compareBundleToProof(getBuildIdentity("9".repeat(40)), view),
+    "DIFFERENT SHA · THIS BUNDLE IS NOT COVERED BY THE LAST RECEIPT",
+  );
+  assert.equal(
+    compareBundleToProof(getBuildIdentity(undefined), view),
+    "CURRENT BUNDLE UNBOUND · NO MATCH CLAIM",
+  );
+
+  const mismatched = structuredClone(CLOUD_PROOF_SNAPSHOT);
+  mismatched.artifacts[0].runId = 29618006967;
+  assert.throws(() => getCloudProofView(mismatched), /selected successful push run/);
+  const badDigest = structuredClone(CLOUD_PROOF_SNAPSHOT);
+  badDigest.artifacts[1].digest = "sha256:branch";
+  assert.throws(() => getCloudProofView(badDigest), /name or digest/);
+  assert.throws(() => getCloudProofView({ ...CLOUD_PROOF_SNAPSHOT, deployed: true }), /cannot imply/);
 });
 
 function preparedPromotionReceipt() {
