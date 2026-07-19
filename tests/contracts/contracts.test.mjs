@@ -8,6 +8,7 @@ import { getBuildIdentity } from "../../src/data/buildIdentity.ts";
 import { CLOUD_PROOF_SNAPSHOT, compareBundleToProof, getCloudProofView } from "../../src/data/cloudProofSnapshot.ts";
 import { FLOCK_RELAY_SNAPSHOT, getFlockRelayView } from "../../src/data/flockRelaySnapshot.ts";
 import { createCaptureDraftReceipt } from "../../src/data/captureDraft.ts";
+import { createOperationIntent, OPERATION_ACTIONS } from "../../src/data/operationIntent.ts";
 import { calculateProgress, getProjectSnapshotView } from "../../src/data/projectSnapshot.ts";
 import { validatePromotionReceipt } from "../../scripts/validate-promotion-receipt.mjs";
 import { writeBuildArtifactReceipt } from "../../scripts/write-build-artifact-receipt.mjs";
@@ -254,4 +255,59 @@ test("promotion receipt confines destinations and preserves approval order", () 
   const deployed = preparedPromotionReceipt();
   deployed.truth_labels.deployed = true;
   assert.throws(() => validatePromotionReceipt(deployed), /FORBIDDEN/);
+});
+
+
+test("operation intents are allowlisted, deterministic, frozen, and local only", () => {
+  const now = new Date("2026-07-19T17:00:00.000Z");
+  for (const action of OPERATION_ACTIONS) {
+    const input = {
+      actionId: action.id,
+      sourceSha: "f".repeat(40),
+      expectedSourceSha: "f".repeat(40),
+      sourcePath: "docs/flock/STATE.json",
+      now,
+    };
+    const receipt = createOperationIntent(input);
+    assert.deepEqual(receipt, createOperationIntent(input));
+    assert.equal(Object.isFrozen(receipt), true);
+    assert.equal(receipt.stage, "PLANNED_LOCAL");
+    assert.equal(receipt.persistence, "SESSION_ONLY");
+    assert.equal(receipt.transport, "NONE");
+    assert.equal(receipt.truth, "LOCAL_OPERATION_INTENT_NOT_DISPATCHED");
+    assert.equal(receipt.executionOwner, "CODEX_ROOT");
+    assert.equal(receipt.approvalState, "PENDING_HUMAN_GATE");
+    assert.equal(receipt.externalEnderState, "BLOCKED_UNBOUND");
+    assert.deepEqual(
+      [receipt.requestSent, receipt.executed, receipt.verified, receipt.canonWritten, receipt.merged, receipt.deployed],
+      [false, false, false, false, false, false],
+    );
+    for (const forbiddenKey of ["payload", "raw", "secret", "token", "endpoint", "networkTarget", "delivered"]) {
+      assert.equal(Object.hasOwn(receipt, forbiddenKey), false);
+    }
+  }
+  assert.equal(Object.isFrozen(OPERATION_ACTIONS), true);
+  OPERATION_ACTIONS.forEach((action) => assert.equal(Object.isFrozen(action), true));
+});
+
+test("operation intents fail closed on stale provenance, path escape, or elevated claims", () => {
+  const valid = {
+    actionId: "RUN_SANDBOX_VERIFY",
+    sourceSha: "a".repeat(40),
+    expectedSourceSha: "a".repeat(40),
+    sourcePath: "docs/flock/STATE.json",
+    now: new Date("2026-07-19T17:00:00.000Z"),
+  };
+  const invalid = [
+    { ...valid, actionId: "DEPLOY_CANON" },
+    { ...valid, sourceSha: "a".repeat(39) },
+    { ...valid, sourceSha: "A".repeat(40), expectedSourceSha: "A".repeat(40) },
+    { ...valid, expectedSourceSha: "b".repeat(40) },
+    { ...valid, sourcePath: "../STATE.json" },
+    { ...valid, sourcePath: "C:\\STATE.json" },
+    { ...valid, repository: "courtney/Harvey-Mobile" },
+    { ...valid, executionOwner: "ROLE_AGENT" },
+    { ...valid, approvalState: "APPROVED" },
+  ];
+  invalid.forEach((candidate) => assert.throws(() => createOperationIntent(candidate)));
 });
