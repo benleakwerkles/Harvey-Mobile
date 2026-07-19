@@ -131,29 +131,29 @@ test("capture rejects blank, oversized, secret-shaped, and embedded credentials"
 
 
 test("relay snapshot stays immutable, ordered, and externally blocked", () => {
-  const view = getFlockRelayView(FLOCK_RELAY_SNAPSHOT, new Date("2026-07-18T00:45:01.000Z"));
-  assert.equal(view.readyCount, 3);
-  assert.equal(view.receiptedCount, 0);
+  const view = getFlockRelayView(FLOCK_RELAY_SNAPSHOT, new Date("2026-07-19T17:12:01.000Z"));
+  assert.equal(view.readyCount, 0);
+  assert.equal(view.receiptedCount, 3);
   assert.equal(view.externalEnderState, "BLOCKED_UNBOUND");
   assert.deepEqual(
     view.packets.map((packet) => packet.packetId),
     [
-      "F_DINK_HARVEY_MOBILE_RELAY_SURFACE_20260717_C3",
-      "F_CURSOR_ENDER_HARVEY_MOBILE_RELAY_UX_20260717_C3",
-      "F_BEAN_THUFIR_HARVEY_MOBILE_RELAY_AUDIT_20260717_C3",
+      "F_DINK_HARVEY_MOBILE_OPERATION_INTENT_20260719_C4",
+      "F_CURSOR_ENDER_HARVEY_MOBILE_OPERATIONS_UX_20260719_C4",
+      "F_BEAN_THUFIR_HARVEY_MOBILE_OPERATION_SAFETY_20260719_C4",
     ],
   );
 
   assert.throws(
-    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, sourcePath: "../STATE.json" }, new Date("2026-07-18T00:45:01.000Z")),
+    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, sourcePath: "../STATE.json" }, new Date("2026-07-19T17:12:01.000Z")),
     /repository-relative/,
   );
   assert.throws(
-    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, externalEnderState: "DELIVERED" }, new Date("2026-07-18T00:45:01.000Z")),
+    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, externalEnderState: "DELIVERED" }, new Date("2026-07-19T17:12:01.000Z")),
     /receiver proof/,
   );
   assert.throws(
-    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, packets: [...FLOCK_RELAY_SNAPSHOT.packets, FLOCK_RELAY_SNAPSHOT.packets[0]] }, new Date("2026-07-18T00:45:01.000Z")),
+    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, packets: [...FLOCK_RELAY_SNAPSHOT.packets, FLOCK_RELAY_SNAPSHOT.packets[0]] }, new Date("2026-07-19T17:12:01.000Z")),
     /unique/,
   );
 });
@@ -165,14 +165,14 @@ test("internal role receipts cannot become external delivery", () => {
   };
   const view = getFlockRelayView(
     { ...FLOCK_RELAY_SNAPSHOT, packets: [internalReceipt] },
-    new Date("2026-07-18T00:45:01.000Z"),
+    new Date("2026-07-19T17:12:01.000Z"),
   );
   assert.equal(view.receiptedCount, 1);
   assert.equal(view.externalEnderState, "BLOCKED_UNBOUND");
   assert.throws(
     () => getFlockRelayView(
       { ...FLOCK_RELAY_SNAPSHOT, packets: [{ ...internalReceipt, internalRoleAgent: false }] },
-      new Date("2026-07-18T00:45:01.000Z"),
+      new Date("2026-07-19T17:12:01.000Z"),
     ),
     /explicitly internal/,
   );
