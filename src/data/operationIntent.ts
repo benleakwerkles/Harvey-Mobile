@@ -54,6 +54,7 @@ export type OperationIntentReceipt = Readonly<{
 type OperationIntentInput = Readonly<{
   actionId: string;
   sourceSha: string;
+  expectedSourceSha?: string;
   sourcePath?: string;
   repository?: string;
   executionOwner?: string;
@@ -88,6 +89,9 @@ export function createOperationIntent(input: OperationIntentInput): OperationInt
   if (!ALLOWED_IDS.has(input.actionId)) throw new Error("Operation action is not allowlisted.");
   if (repository !== HARVEY_MOBILE_REPOSITORY) throw new Error("Operation repository is not Harvey Mobile.");
   if (!FULL_SHA.test(input.sourceSha)) throw new Error("Operation source SHA must be a full lowercase commit SHA.");
+  if (input.expectedSourceSha !== undefined && input.expectedSourceSha !== input.sourceSha) {
+    throw new Error("Operation source SHA does not match the viewed snapshot.");
+  }
   assertRepositoryRelative(sourcePath);
   if (executionOwner !== "CODEX_ROOT") throw new Error("Operation execution owner must remain CODEX_ROOT.");
   if (approvalState !== "PENDING_HUMAN_GATE") throw new Error("Operation approval must remain pending.");
