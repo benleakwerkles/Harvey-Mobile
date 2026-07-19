@@ -32,3 +32,12 @@ npm run web
 Cloud proof uses `npm run export:android` and `npm run export:web`. GitHub Actions records both the source-head SHA and the exact checked-out tree SHA, injects the tree SHA into both bundles, and uploads separate tree-SHA-bound artifacts carrying the same integrity receipt. This avoids confusing a pull request's synthetic merge tree with its source branch. The web artifact is downloadable test material, not a deployed or live preview. No simulator is required. There is no configured lint command, so lint is not claimed.
 
 See `docs/promotion/HARVEY_MOBILE_PROMOTION_MAP.md` before proposing any canon change.
+
+
+## Guarded Operations lane
+
+The `Operate` tab is deliberately separate from the mutable Build checklist. It can prepare only three allowlisted, session-only intents: `RUN_SANDBOX_VERIFY`, `REQUEST_REVIEW`, and `PREPARE_PROMOTION`.
+
+Each intent is bound to `benleakwerkles/Harvey-Mobile`, a repository-relative source path, a full 40-character source SHA, `CODEX_ROOT`, and `PENDING_HUMAN_GATE`. The receipt records `transport: NONE` and `LOCAL_OPERATION_INTENT_NOT_DISPATCHED`; it contains no raw payload, secret, endpoint, network target, or live GitHub mutation.
+
+Evidence exposes a four-stage truth ladder. A local tap may prove only `PLANNED_LOCAL`; `REQUESTED`, `EXECUTED`, and `VERIFIED` remain explicitly unproven. Reload clears the intent. External Ender remains `BLOCKED_UNBOUND`.
