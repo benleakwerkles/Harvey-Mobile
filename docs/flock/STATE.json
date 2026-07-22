@@ -126,9 +126,31 @@
       "state": "RECEIPTED",
       "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/codex/harvey-mobile-vpg-20260719/docs/flock/packets/F_BEAN_THUFIR_HARVEY_MOBILE_OPERATION_SAFETY_20260719_C4.md",
       "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260719_C4.md"
+    },
+    {
+      "packet_id": "F_DINK_HARVEY_MOBILE_MAILBOX_RESOLUTION_20260721_C5",
+      "address": "DINK@MEDULLINA",
+      "state": "RECEIPTED",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/8260b18d0358bcd99ec08749e06695e798e172f5/docs/flock/packets/F_DINK_HARVEY_MOBILE_MAILBOX_RESOLUTION_20260721_C5.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260721_C5.md"
+    },
+    {
+      "packet_id": "F_CURSOR_ENDER_HARVEY_MOBILE_PULL_DISCOVERY_20260721_C5",
+      "address": "CURSOR_ENDER_DOOZER@MEDULLINA",
+      "state": "RECEIPTED_INTERNAL_ROLE_AGENT",
+      "external_ender_state": "BLOCKED_UNBOUND",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/8260b18d0358bcd99ec08749e06695e798e172f5/docs/flock/packets/F_CURSOR_ENDER_HARVEY_MOBILE_PULL_DISCOVERY_20260721_C5.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260721_C5.md"
+    },
+    {
+      "packet_id": "F_BEAN_THUFIR_HARVEY_MOBILE_MAILBOX_AUDIT_20260721_C5",
+      "address": "BEAN_THUFIR@MEDULLINA",
+      "state": "RECEIPTED",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/8260b18d0358bcd99ec08749e06695e798e172f5/docs/flock/packets/F_BEAN_THUFIR_HARVEY_MOBILE_MAILBOX_AUDIT_20260721_C5.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260721_C5.md"
     }
   ],
-  "proof_boundary": "Cycle-four V/P/G is receipted with a cloud-only guarded Operations implementation and successful SHA-scoped sandbox artifacts. Real external Ender/Claude remains BLOCKED_UNBOUND. These receipts prove neither live dispatch, canon, approval, merge, deployment, hosting, nor receiver delivery.",
+  "proof_boundary": "Cycle-five V/P/G is receipted with a deterministic cloud mailbox, immutable packet verification, fail-closed address resolution, provenance-first Relay UI, and successful SHA-scoped sandbox artifacts. The mailbox remains PENDING_PR_MERGE until PR #3 reaches main. Real external Ender/Claude remains BLOCKED_UNBOUND. These receipts prove neither live dispatch, canon, approval, merge, deployment, hosting, nor receiver delivery.",
   "cycle_three": {
     "state": "SANDBOX_G_RECEIPTED",
     "v_checkpoint_sha": "91d9cfbe5b3b9a6ba390382d51183277bf5b5ce9",
@@ -200,5 +222,47 @@
     "merged": false,
     "deployed": false,
     "execution_receipt": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260719_C4.md"
+  },
+  "cycle_five": {
+    "state": "SANDBOX_G_RECEIPTED",
+    "v_checkpoint_sha": "8260b18d0358bcd99ec08749e06695e798e172f5",
+    "implementation_sha": "bf513d81a21375006403ea1e2e16b398cf6b0430",
+    "work_mode": "CLOUD_ONLY",
+    "execution_owner": "CODEX_ROOT",
+    "mailbox": {
+      "path": "docs/flock/MAILBOX.json",
+      "availability": "PENDING_PR_MERGE",
+      "entry_count": 3,
+      "packet_checkpoint_sha": "8260b18d0358bcd99ec08749e06695e798e172f5",
+      "discovery_truth": "FOUND_DOES_NOT_IMPLY_PULLED_OR_RECEIPTED"
+    },
+    "pull_receipts": {
+      "dink": "READ_ONLY_ROLE_AGENT_RECEIPTED",
+      "cursor_ender": "RECEIPTED_INTERNAL_ROLE_AGENT",
+      "bean_thufir": "READ_ONLY_ROLE_AGENT_RECEIPTED"
+    },
+    "verification_run_id": 29890426988,
+    "verification_conclusion": "success",
+    "pr_build_tree_sha": "5700deb37fab8501a11949a314fbf017cf222e3f",
+    "android_artifact": {
+      "id": 8518045817,
+      "name": "harvey-mobile-android-5700deb37fab8501a11949a314fbf017cf222e3f",
+      "digest": "sha256:0b12eeca62273e9fe1e4fc28432c2c22873ac32276d80278120e3ea34ef25fd6",
+      "expires_at": "2026-07-29T04:12:45Z"
+    },
+    "web_artifact": {
+      "id": 8518046049,
+      "name": "harvey-mobile-web-5700deb37fab8501a11949a314fbf017cf222e3f",
+      "digest": "sha256:8817034f2eec5a036d9150097d2dbbf9676c70a62a62c9951d6057ea132d681a",
+      "expires_at": "2026-07-29T04:12:46Z",
+      "truth": "DOWNLOADABLE_BUILD_ARTIFACT_NOT_LIVE"
+    },
+    "external_ender_state": "BLOCKED_UNBOUND",
+    "promotion_approval": "PENDING",
+    "canon_written": false,
+    "merged": false,
+    "deployed": false,
+    "hosted": false,
+    "execution_receipt": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260721_C5.md"
   }
 }
