@@ -7,11 +7,13 @@ import test from "node:test";
 import { getBuildIdentity } from "../../src/data/buildIdentity.ts";
 import { CLOUD_PROOF_SNAPSHOT, compareBundleToProof, getCloudProofView } from "../../src/data/cloudProofSnapshot.ts";
 import { FLOCK_RELAY_SNAPSHOT, getFlockRelayView } from "../../src/data/flockRelaySnapshot.ts";
+import { MailboxResolutionError, resolveFlockPacket, validateFlockMailbox } from "../../src/data/flockMailboxDiscovery.ts";
 import { createCaptureDraftReceipt } from "../../src/data/captureDraft.ts";
 import { createOperationIntent, OPERATION_ACTIONS } from "../../src/data/operationIntent.ts";
 import { calculateProgress, getProjectSnapshotView } from "../../src/data/projectSnapshot.ts";
 import { validatePromotionReceipt } from "../../scripts/validate-promotion-receipt.mjs";
 import { writeBuildArtifactReceipt } from "../../scripts/write-build-artifact-receipt.mjs";
+import { verifyFlockMailbox } from "../../scripts/validate-flock-mailbox.mjs";
 
 const snapshot = Object.freeze({
   project: "Werkles",
@@ -310,4 +312,108 @@ test("operation intents fail closed on stale provenance, path escape, or elevate
     { ...valid, approvalState: "APPROVED" },
   ];
   invalid.forEach((candidate) => assert.throws(() => createOperationIntent(candidate)));
+});
+
+
+test("P(address) resolves one immutable packet without escalating truth", async () => {
+  const mailbox = JSON.parse(await readFile(new URL("../../docs/flock/MAILBOX.json", import.meta.url), "utf8"));
+  validateFlockMailbox(mailbox);
+
+  const cases = [
+    ["Dink@Medullina", "DINK@MEDULLINA"],
+    ["cursor@medullina", "CURSOR_ENDER_DOOZER@MEDULLINA"],
+    ["Thufir@Medullina", "BEAN_THUFIR@MEDULLINA"],
+  ];
+  for (const [address, canonical] of cases) {
+    const result = resolveFlockPacket(mailbox, address, new Date("2026-07-21T16:00:01.000Z"));
+    assert.equal(result.state, "FOUND");
+    assert.equal(result.truth, "FOUND_NOT_PULLED_OR_RECEIPTED");
+    assert.equal(result.canonical_address, canonical);
+    assert.equal(result.packet_commit_sha, mailbox.packet_checkpoint_sha);
+    assert.equal(result.transport, "NONE");
+    assert.equal(result.execution_owner, "CODEX_ROOT");
+    assert.equal(result.external_ender_state, "BLOCKED_UNBOUND");
+    assert.equal(Object.isFrozen(result), true);
+    assert.deepEqual(Object.values(result.effect_flags), [false, false, false, false, false, false, false, false]);
+    for (const forbiddenKey of ["delivered", "receipt", "approval", "deployment", "hosting"]) {
+      assert.equal(Object.hasOwn(result, forbiddenKey), false);
+    }
+  }
+
+  assert.throws(
+    () => resolveFlockPacket(mailbox, "", new Date("2026-07-21T16:00:01.000Z")),
+    (error) => error instanceof MailboxResolutionError && error.code === "ADDRESS_REQUIRED",
+  );
+  assert.throws(
+    () => resolveFlockPacket(mailbox, "UNKNOWN@MEDULLINA", new Date("2026-07-21T16:00:01.000Z")),
+    (error) => error instanceof MailboxResolutionError && error.code === "NO_PACKET",
+  );
+  assert.throws(
+    () => resolveFlockPacket(mailbox, "DINK@MEDULLINA", new Date("2026-09-01T16:00:01.000Z"), 30),
+    (error) => error instanceof MailboxResolutionError && error.code === "MAILBOX_STALE",
+  );
+});
+
+test("mailbox validation fails closed on spoofing, ambiguity, mutation, and path escape", async () => {
+  const mailbox = JSON.parse(await readFile(new URL("../../docs/flock/MAILBOX.json", import.meta.url), "utf8"));
+  const invalid = [];
+
+  invalid.push({ ...structuredClone(mailbox), repository: "courtney/Harvey-Mobile" });
+  invalid.push({ ...structuredClone(mailbox), packet_checkpoint_sha: "main" });
+
+  const mutableUrl = structuredClone(mailbox);
+  mutableUrl.entries[0].raw_url = mutableUrl.entries[0].raw_url.replace(mailbox.packet_checkpoint_sha, "main");
+  invalid.push(mutableUrl);
+
+  const escapedPath = structuredClone(mailbox);
+  escapedPath.entries[0].packet_path = "docs/flock/packets/%2e%2e/STATE.json";
+  invalid.push(escapedPath);
+
+  const ambiguous = structuredClone(mailbox);
+  ambiguous.entries[1].aliases.push("BEAN@MEDULLINA");
+  invalid.push(ambiguous);
+
+  const effectClaim = structuredClone(mailbox);
+  effectClaim.effect_flags.executed = true;
+  invalid.push(effectClaim);
+
+  const externalDelivery = structuredClone(mailbox);
+  externalDelivery.external_ender_state = "DELIVERED";
+  invalid.push(externalDelivery);
+
+  invalid.forEach((candidate) => assert.throws(() => validateFlockMailbox(candidate)));
+
+  const digestMismatch = {
+    [mailbox.entries[0].packet_path]: {
+      text: mailbox.entries[0].packet_id + " " + mailbox.entries[0].cycle,
+      sha256: "0".repeat(64),
+    },
+  };
+  assert.throws(
+    () => validateFlockMailbox(mailbox, digestMismatch),
+    (error) => error instanceof MailboxResolutionError && error.code === "PACKET_MISMATCH",
+  );
+});
+
+test("mailbox CI proof reads every packet from the declared commit", async () => {
+  const receipt = await verifyFlockMailbox();
+  assert.deepEqual(receipt, {
+    ok: true,
+    state: "IMMUTABLE_PACKETS_VERIFIED",
+    packetCheckpointSha: "8260b18d0358bcd99ec08749e06695e798e172f5",
+    packetCount: 3,
+    transport: "NONE",
+    executionOwner: "CODEX_ROOT",
+    externalEnderState: "BLOCKED_UNBOUND",
+    effects: {
+      dispatched: false,
+      requested: false,
+      executed: false,
+      verified: false,
+      canonWritten: false,
+      merged: false,
+      deployed: false,
+      hosted: false,
+    },
+  });
 });
