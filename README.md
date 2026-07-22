@@ -41,3 +41,9 @@ The `Operate` tab is deliberately separate from the mutable Build checklist. It 
 Each intent is bound to `benleakwerkles/Harvey-Mobile`, a repository-relative source path, a full 40-character source SHA, `CODEX_ROOT`, and `PENDING_HUMAN_GATE`. The receipt records `transport: NONE` and `LOCAL_OPERATION_INTENT_NOT_DISPATCHED`; it contains no raw payload, secret, endpoint, network target, or live GitHub mutation.
 
 Evidence exposes a four-stage truth ladder. A local tap may prove only `PLANNED_LOCAL`; `REQUESTED`, `EXECUTED`, and `VERIFIED` remain explicitly unproven. Reload clears the intent. External Ender remains `BLOCKED_UNBOUND`.
+
+## Flock packet lookup
+
+Plain **P** resolves an explicit Medullina address through `docs/flock/MAILBOX.json`, pulls the packet at its declared full commit SHA, verifies its SHA-256 digest, and returns a read receipt. The resolver fails closed instead of searching or guessing. `FOUND`, `PULLED`, and `RECEIPTED` are separate proof states; none imply dispatch or execution.
+
+The mailbox is currently `PENDING_PR_MERGE` in PR #3. Once merged, the default-branch mailbox becomes the stable Aeye entry point. See `docs/flock/PULL_PROTOCOL.md` for the exact contract and error states.
