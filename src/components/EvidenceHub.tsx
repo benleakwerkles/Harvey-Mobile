@@ -7,17 +7,20 @@ import {
   type CloudProofView,
 } from "../data/cloudProofSnapshot";
 import type { FlockRelayView } from "../data/flockRelaySnapshot";
+import type { OperationIntentReceipt } from "../data/operationIntent";
 import { FlockRelaySnapshotCard } from "./FlockRelaySnapshotCard";
+import { OperationReceiptHistory } from "./OperationReceiptHistory";
 
-type EvidenceMode = "Relay" | "Cloud proof";
+type EvidenceMode = "Relay" | "Operations" | "Cloud proof";
 
 type EvidenceHubProps = Readonly<{
   buildIdentity: BuildIdentity;
   cloudProof: CloudProofView;
+  operationReceipt: OperationIntentReceipt | null;
   relay: FlockRelayView;
 }>;
 
-export function EvidenceHub({ buildIdentity, cloudProof, relay }: EvidenceHubProps) {
+export function EvidenceHub({ buildIdentity, cloudProof, operationReceipt, relay }: EvidenceHubProps) {
   const [mode, setMode] = useState<EvidenceMode>("Relay");
   const bundleCoverage = compareBundleToProof(buildIdentity, cloudProof);
 
@@ -29,7 +32,7 @@ export function EvidenceHub({ buildIdentity, cloudProof, relay }: EvidenceHubPro
       </View>
 
       <View accessibilityRole="tablist" style={styles.segmented}>
-        {(["Relay", "Cloud proof"] as const).map((item) => (
+        {(["Relay", "Operations", "Cloud proof"] as const).map((item) => (
           <Pressable
             accessibilityRole="tab"
             accessibilityState={{ selected: mode === item }}
@@ -43,6 +46,7 @@ export function EvidenceHub({ buildIdentity, cloudProof, relay }: EvidenceHubPro
       </View>
 
       {mode === "Relay" ? <FlockRelaySnapshotCard snapshot={relay} /> : null}
+      {mode === "Operations" ? <OperationReceiptHistory receipt={operationReceipt} /> : null}
 
       {mode === "Cloud proof" ? (
         <>
@@ -106,7 +110,7 @@ const styles = StyleSheet.create({
   segmented: { flexDirection: "row", backgroundColor: "#05101A", borderRadius: 16, padding: 5, marginTop: 18, borderWidth: 1, borderColor: "#20344C" },
   segment: { flex: 1, minHeight: 44, alignItems: "center", justifyContent: "center", borderRadius: 12 },
   segmentActive: { backgroundColor: "#122338" },
-  segmentLabel: { color: "#8EA0B7", fontSize: 13, fontWeight: "800" },
+  segmentLabel: { color: "#8EA0B7", fontSize: 11, fontWeight: "800" },
   segmentLabelActive: { color: "#F4F7FB" },
   proofHero: { backgroundColor: "#0D1A2A", borderColor: "#20344C", borderWidth: 1, borderRadius: 20, padding: 18, marginTop: 20 },
   proven: { color: "#57E39B", fontSize: 10, fontWeight: "900", letterSpacing: 0.9, marginTop: 18 },

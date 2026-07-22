@@ -29,6 +29,28 @@ export function FlockRelaySnapshotCard({ snapshot }: FlockRelaySnapshotCardProps
         <Text style={styles.copy}>Only the execution owner may execute or push. Work mode: CLOUD ONLY.</Text>
       </View>
 
+
+      <View
+        accessibilityLabel={["Mailbox", snapshot.mailbox.discoveryState, snapshot.mailbox.availability, snapshot.mailbox.entryCount, "packets", "external Ender blocked unbound"].join(", ")}
+        style={styles.mailbox}
+      >
+        <Text style={styles.eyebrow}>P ADDRESS MAILBOX</Text>
+        <Text style={styles.mailboxFound}>FOUND · {snapshot.mailbox.entryCount} ADDRESSED PACKETS</Text>
+        <Text style={styles.mailboxState}>
+          {snapshot.mailbox.availability === "DEFAULT_BRANCH"
+            ? "DEFAULT BRANCH · DISCOVERABLE"
+            : "PENDING PR MERGE · USE IMMUTABLE LINKS"}
+        </Text>
+        <Text style={styles.label}>MAILBOX SOURCE</Text>
+        <Text selectable style={styles.mailboxValue}>{snapshot.mailbox.sourcePath}</Text>
+        <Text style={styles.label}>PACKET CHECKPOINT</Text>
+        <Text selectable style={styles.sha}>{snapshot.mailbox.packetCheckpointSha}</Text>
+        <Text style={styles.copy}>Freshness · observed {snapshot.mailboxAgeDays} days ago</Text>
+        <Text style={styles.copy}>
+          FOUND means located only. It does not mean pulled, receipted, dispatched, executed, or delivered.
+        </Text>
+      </View>
+
       <View style={styles.heading}>
         <Text style={styles.eyebrow}>COMMITTED RELAY SNAPSHOT</Text>
         <Text style={styles.title}>Flock packet ledger</Text>
@@ -71,6 +93,10 @@ const styles = StyleSheet.create({
   blockerEyebrow: { color: "#FFB45D", fontSize: 10, fontWeight: "900", letterSpacing: 1.2 },
   blockerState: { color: "#FFB45D", fontSize: 25, fontWeight: "900", marginTop: 7 },
   owner: { backgroundColor: "#0D1A2A", borderColor: "#20344C", borderWidth: 1, borderRadius: 18, padding: 16, marginTop: 12 },
+  mailbox: { backgroundColor: "#0D1A2A", borderColor: "#52D3FF", borderWidth: 1, borderRadius: 18, padding: 16, marginTop: 12 },
+  mailboxFound: { color: "#52D3FF", fontSize: 12, fontWeight: "900", marginTop: 9 },
+  mailboxState: { color: "#FFB45D", fontSize: 10, fontWeight: "900", lineHeight: 16, marginTop: 7 },
+  mailboxValue: { color: "#F4F7FB", fontSize: 11, marginTop: 3 },
   heading: { marginTop: 26, marginBottom: 12 },
   eyebrow: { color: "#52D3FF", fontSize: 10, fontWeight: "900", letterSpacing: 1.25 },
   title: { color: "#F4F7FB", fontSize: 24, fontWeight: "800", marginTop: 6 },

@@ -3,16 +3,22 @@ import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "rea
 
 import { CommandBoard, type BuildTask } from "../src/components/CommandBoard";
 import { EvidenceHub } from "../src/components/EvidenceHub";
+import { OperationsHub } from "../src/components/OperationsHub";
 import { QuickCapture, type SessionCapture } from "../src/components/QuickCapture";
 import { BUILD_IDENTITY } from "../src/data/buildIdentity";
 import { CLOUD_PROOF_SNAPSHOT, getCloudProofView } from "../src/data/cloudProofSnapshot";
 import { FLOCK_RELAY_SNAPSHOT, getFlockRelayView } from "../src/data/flockRelaySnapshot";
 import { createCaptureDraftReceipt, type CaptureDraftReceipt } from "../src/data/captureDraft";
+import {
+  createOperationIntent,
+  type OperationActionId,
+  type OperationIntentReceipt,
+} from "../src/data/operationIntent";
 import { getProjectSnapshotView, type ProjectSnapshot } from "../src/data/projectSnapshot";
 
-type Mode = "Home" | "Build" | "Capture" | "Evidence";
+type Mode = "Home" | "Build" | "Operate" | "Capture" | "Evidence";
 
-const MODES = ["Home", "Build", "Capture", "Evidence"] as const;
+const MODES = ["Home", "Build", "Operate", "Capture", "Evidence"] as const;
 
 const SNAPSHOT: ProjectSnapshot = Object.freeze({
   project: "Werkles",
@@ -24,9 +30,9 @@ const SNAPSHOT: ProjectSnapshot = Object.freeze({
 
 const STARTING_TASKS: readonly BuildTask[] = Object.freeze([
   Object.freeze({ id: "1", title: "Prove the sandbox command board", area: "Mobile shell", done: true }),
-  Object.freeze({ id: "2", title: "Return external Ender receiver proof", area: "Flock relay", done: false }),
+  Object.freeze({ id: "2", title: "Document the external Ender receiver boundary", area: "Flock relay", done: false }),
   Object.freeze({ id: "3", title: "Verify secret-safe local capture", area: "Capture", done: false }),
-  Object.freeze({ id: "4", title: "Pass the sandbox promotion gate", area: "Cloud proof", done: false }),
+  Object.freeze({ id: "4", title: "Prepare sandbox promotion-gate evidence", area: "Cloud proof", done: false }),
 ]);
 
 export default function HarveyHome() {
@@ -36,6 +42,7 @@ export default function HarveyHome() {
   const [captures, setCaptures] = useState<readonly SessionCapture[]>([]);
   const [receipt, setReceipt] = useState<CaptureDraftReceipt | null>(null);
   const [captureError, setCaptureError] = useState<string | null>(null);
+  const [operationReceipt, setOperationReceipt] = useState<OperationIntentReceipt | null>(null);
   const snapshot = useMemo(() => getProjectSnapshotView(SNAPSHOT, new Date()), []);
   const relay = useMemo(() => getFlockRelayView(FLOCK_RELAY_SNAPSHOT, new Date()), []);
   const cloudProof = useMemo(() => getCloudProofView(CLOUD_PROOF_SNAPSHOT), []);
@@ -75,6 +82,15 @@ export default function HarveyHome() {
     setCaptureError(null);
   };
 
+  const createLocalOperationReceipt = (actionId: OperationActionId) => {
+    setOperationReceipt(createOperationIntent({
+      actionId,
+      sourcePath: SNAPSHOT.sourcePath,
+      sourceSha: SNAPSHOT.sourceSha,
+      now: new Date(),
+    }));
+  };
+
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
@@ -87,7 +103,7 @@ export default function HarveyHome() {
         </View>
 
         <Text style={styles.subtitle}>
-          A phone-first sandbox for moving builds without manufacturing live, saved, or delivered claims.
+          A phone-first sandbox for moving builds without manufacturing live, saved, delivered, or executed claims.
         </Text>
 
         <View accessibilityRole="tablist" style={styles.nav}>
@@ -124,6 +140,16 @@ export default function HarveyHome() {
           <CommandBoard buildIdentity={BUILD_IDENTITY} snapshot={snapshot} tasks={tasks} variant="build" onToggleTask={toggleTask} />
         ) : null}
 
+        {mode === "Operate" ? (
+          <OperationsHub
+            onClearIntent={() => setOperationReceipt(null)}
+            onCreateIntent={createLocalOperationReceipt}
+            receipt={operationReceipt}
+            sourcePath={SNAPSHOT.sourcePath}
+            sourceSha={SNAPSHOT.sourceSha}
+          />
+        ) : null}
+
         {mode === "Capture" ? (
           <QuickCapture
             captures={captures}
@@ -137,7 +163,12 @@ export default function HarveyHome() {
         ) : null}
 
         {mode === "Evidence" ? (
-          <EvidenceHub buildIdentity={BUILD_IDENTITY} cloudProof={cloudProof} relay={relay} />
+          <EvidenceHub
+            buildIdentity={BUILD_IDENTITY}
+            cloudProof={cloudProof}
+            operationReceipt={operationReceipt}
+            relay={relay}
+          />
         ) : null}
 
         <Text style={styles.footer}>SANDBOX · BENLEAKWERKLES/HARVEY-MOBILE · NOT CANON</Text>
@@ -158,7 +189,7 @@ const styles = StyleSheet.create({
   nav: { flexDirection: "row", backgroundColor: "#05101A", borderRadius: 16, padding: 5, marginTop: 24, borderWidth: 1, borderColor: "#20344C" },
   navButton: { flex: 1, alignItems: "center", paddingVertical: 11, borderRadius: 12 },
   navActive: { backgroundColor: "#122338" },
-  navLabel: { color: "#8EA0B7", fontSize: 14, fontWeight: "700" },
+  navLabel: { color: "#8EA0B7", fontSize: 11, fontWeight: "700" },
   navLabelActive: { color: "#F4F7FB" },
   stats: { flexDirection: "row", gap: 12, marginTop: 12 },
   stat: { flex: 1, backgroundColor: "#0D1A2A", borderRadius: 18, padding: 17, borderWidth: 1, borderColor: "#20344C" },

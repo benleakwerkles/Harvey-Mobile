@@ -7,10 +7,13 @@ import test from "node:test";
 import { getBuildIdentity } from "../../src/data/buildIdentity.ts";
 import { CLOUD_PROOF_SNAPSHOT, compareBundleToProof, getCloudProofView } from "../../src/data/cloudProofSnapshot.ts";
 import { FLOCK_RELAY_SNAPSHOT, getFlockRelayView } from "../../src/data/flockRelaySnapshot.ts";
+import { MailboxResolutionError, resolveFlockPacket, validateFlockMailbox } from "../../src/data/flockMailboxDiscovery.ts";
 import { createCaptureDraftReceipt } from "../../src/data/captureDraft.ts";
+import { createOperationIntent, OPERATION_ACTIONS } from "../../src/data/operationIntent.ts";
 import { calculateProgress, getProjectSnapshotView } from "../../src/data/projectSnapshot.ts";
 import { validatePromotionReceipt } from "../../scripts/validate-promotion-receipt.mjs";
 import { writeBuildArtifactReceipt } from "../../scripts/write-build-artifact-receipt.mjs";
+import { verifyFlockMailbox } from "../../scripts/validate-flock-mailbox.mjs";
 
 const snapshot = Object.freeze({
   project: "Werkles",
@@ -130,29 +133,35 @@ test("capture rejects blank, oversized, secret-shaped, and embedded credentials"
 
 
 test("relay snapshot stays immutable, ordered, and externally blocked", () => {
-  const view = getFlockRelayView(FLOCK_RELAY_SNAPSHOT, new Date("2026-07-18T00:45:01.000Z"));
-  assert.equal(view.readyCount, 3);
-  assert.equal(view.receiptedCount, 0);
+  const view = getFlockRelayView(FLOCK_RELAY_SNAPSHOT, new Date("2026-07-21T16:00:01.000Z"));
+  assert.equal(view.readyCount, 0);
+  assert.equal(view.receiptedCount, 3);
   assert.equal(view.externalEnderState, "BLOCKED_UNBOUND");
+  assert.equal(view.mailbox.sourcePath, "docs/flock/MAILBOX.json");
+  assert.equal(view.mailbox.packetCheckpointSha, "8260b18d0358bcd99ec08749e06695e798e172f5");
+  assert.equal(view.mailbox.availability, "PENDING_PR_MERGE");
+  assert.equal(view.mailbox.discoveryState, "FOUND");
+  assert.equal(view.mailbox.truth, "FOUND_DOES_NOT_IMPLY_PULLED_OR_RECEIPTED");
+  assert.equal(view.mailboxAgeDays, 0);
   assert.deepEqual(
     view.packets.map((packet) => packet.packetId),
     [
-      "F_DINK_HARVEY_MOBILE_RELAY_SURFACE_20260717_C3",
-      "F_CURSOR_ENDER_HARVEY_MOBILE_RELAY_UX_20260717_C3",
-      "F_BEAN_THUFIR_HARVEY_MOBILE_RELAY_AUDIT_20260717_C3",
+      "F_DINK_HARVEY_MOBILE_OPERATION_INTENT_20260719_C4",
+      "F_CURSOR_ENDER_HARVEY_MOBILE_OPERATIONS_UX_20260719_C4",
+      "F_BEAN_THUFIR_HARVEY_MOBILE_OPERATION_SAFETY_20260719_C4",
     ],
   );
 
   assert.throws(
-    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, sourcePath: "../STATE.json" }, new Date("2026-07-18T00:45:01.000Z")),
+    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, sourcePath: "../STATE.json" }, new Date("2026-07-21T16:00:01.000Z")),
     /repository-relative/,
   );
   assert.throws(
-    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, externalEnderState: "DELIVERED" }, new Date("2026-07-18T00:45:01.000Z")),
+    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, externalEnderState: "DELIVERED" }, new Date("2026-07-21T16:00:01.000Z")),
     /receiver proof/,
   );
   assert.throws(
-    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, packets: [...FLOCK_RELAY_SNAPSHOT.packets, FLOCK_RELAY_SNAPSHOT.packets[0]] }, new Date("2026-07-18T00:45:01.000Z")),
+    () => getFlockRelayView({ ...FLOCK_RELAY_SNAPSHOT, packets: [...FLOCK_RELAY_SNAPSHOT.packets, FLOCK_RELAY_SNAPSHOT.packets[0]] }, new Date("2026-07-21T16:00:01.000Z")),
     /unique/,
   );
 });
@@ -164,14 +173,14 @@ test("internal role receipts cannot become external delivery", () => {
   };
   const view = getFlockRelayView(
     { ...FLOCK_RELAY_SNAPSHOT, packets: [internalReceipt] },
-    new Date("2026-07-18T00:45:01.000Z"),
+    new Date("2026-07-21T16:00:01.000Z"),
   );
   assert.equal(view.receiptedCount, 1);
   assert.equal(view.externalEnderState, "BLOCKED_UNBOUND");
   assert.throws(
     () => getFlockRelayView(
       { ...FLOCK_RELAY_SNAPSHOT, packets: [{ ...internalReceipt, internalRoleAgent: false }] },
-      new Date("2026-07-18T00:45:01.000Z"),
+      new Date("2026-07-21T16:00:01.000Z"),
     ),
     /explicitly internal/,
   );
@@ -254,4 +263,163 @@ test("promotion receipt confines destinations and preserves approval order", () 
   const deployed = preparedPromotionReceipt();
   deployed.truth_labels.deployed = true;
   assert.throws(() => validatePromotionReceipt(deployed), /FORBIDDEN/);
+});
+
+
+test("operation intents are allowlisted, deterministic, frozen, and local only", () => {
+  const now = new Date("2026-07-19T17:00:00.000Z");
+  for (const action of OPERATION_ACTIONS) {
+    const input = {
+      actionId: action.id,
+      sourceSha: "f".repeat(40),
+      expectedSourceSha: "f".repeat(40),
+      sourcePath: "docs/flock/STATE.json",
+      now,
+    };
+    const receipt = createOperationIntent(input);
+    assert.deepEqual(receipt, createOperationIntent(input));
+    assert.equal(Object.isFrozen(receipt), true);
+    assert.equal(receipt.stage, "PLANNED_LOCAL");
+    assert.equal(receipt.persistence, "SESSION_ONLY");
+    assert.equal(receipt.transport, "NONE");
+    assert.equal(receipt.truth, "LOCAL_OPERATION_INTENT_NOT_DISPATCHED");
+    assert.equal(receipt.executionOwner, "CODEX_ROOT");
+    assert.equal(receipt.approvalState, "PENDING_HUMAN_GATE");
+    assert.equal(receipt.externalEnderState, "BLOCKED_UNBOUND");
+    assert.deepEqual(
+      [receipt.requestSent, receipt.executed, receipt.verified, receipt.canonWritten, receipt.merged, receipt.deployed],
+      [false, false, false, false, false, false],
+    );
+    for (const forbiddenKey of ["payload", "raw", "secret", "token", "endpoint", "networkTarget", "delivered"]) {
+      assert.equal(Object.hasOwn(receipt, forbiddenKey), false);
+    }
+  }
+  assert.equal(Object.isFrozen(OPERATION_ACTIONS), true);
+  OPERATION_ACTIONS.forEach((action) => assert.equal(Object.isFrozen(action), true));
+});
+
+test("operation intents fail closed on stale provenance, path escape, or elevated claims", () => {
+  const valid = {
+    actionId: "RUN_SANDBOX_VERIFY",
+    sourceSha: "a".repeat(40),
+    expectedSourceSha: "a".repeat(40),
+    sourcePath: "docs/flock/STATE.json",
+    now: new Date("2026-07-19T17:00:00.000Z"),
+  };
+  const invalid = [
+    { ...valid, actionId: "DEPLOY_CANON" },
+    { ...valid, sourceSha: "a".repeat(39) },
+    { ...valid, sourceSha: "A".repeat(40), expectedSourceSha: "A".repeat(40) },
+    { ...valid, expectedSourceSha: "b".repeat(40) },
+    { ...valid, sourcePath: "../STATE.json" },
+    { ...valid, sourcePath: "C:\\STATE.json" },
+    { ...valid, repository: "courtney/Harvey-Mobile" },
+    { ...valid, executionOwner: "ROLE_AGENT" },
+    { ...valid, approvalState: "APPROVED" },
+  ];
+  invalid.forEach((candidate) => assert.throws(() => createOperationIntent(candidate)));
+});
+
+
+test("P(address) resolves one immutable packet without escalating truth", async () => {
+  const mailbox = JSON.parse(await readFile(new URL("../../docs/flock/MAILBOX.json", import.meta.url), "utf8"));
+  validateFlockMailbox(mailbox);
+
+  const cases = [
+    ["Dink@Medullina", "DINK@MEDULLINA"],
+    ["cursor@medullina", "CURSOR_ENDER_DOOZER@MEDULLINA"],
+    ["Thufir@Medullina", "BEAN_THUFIR@MEDULLINA"],
+  ];
+  for (const [address, canonical] of cases) {
+    const result = resolveFlockPacket(mailbox, address, new Date("2026-07-21T16:00:01.000Z"));
+    assert.equal(result.state, "FOUND");
+    assert.equal(result.truth, "FOUND_NOT_PULLED_OR_RECEIPTED");
+    assert.equal(result.canonical_address, canonical);
+    assert.equal(result.packet_commit_sha, mailbox.packet_checkpoint_sha);
+    assert.equal(result.transport, "NONE");
+    assert.equal(result.execution_owner, "CODEX_ROOT");
+    assert.equal(result.external_ender_state, "BLOCKED_UNBOUND");
+    assert.equal(Object.isFrozen(result), true);
+    assert.deepEqual(Object.values(result.effect_flags), [false, false, false, false, false, false, false, false]);
+    for (const forbiddenKey of ["delivered", "receipt", "approval", "deployment", "hosting"]) {
+      assert.equal(Object.hasOwn(result, forbiddenKey), false);
+    }
+  }
+
+  assert.throws(
+    () => resolveFlockPacket(mailbox, "", new Date("2026-07-21T16:00:01.000Z")),
+    (error) => error instanceof MailboxResolutionError && error.code === "ADDRESS_REQUIRED",
+  );
+  assert.throws(
+    () => resolveFlockPacket(mailbox, "UNKNOWN@MEDULLINA", new Date("2026-07-21T16:00:01.000Z")),
+    (error) => error instanceof MailboxResolutionError && error.code === "NO_PACKET",
+  );
+  assert.throws(
+    () => resolveFlockPacket(mailbox, "DINK@MEDULLINA", new Date("2026-09-01T16:00:01.000Z"), 30),
+    (error) => error instanceof MailboxResolutionError && error.code === "MAILBOX_STALE",
+  );
+});
+
+test("mailbox validation fails closed on spoofing, ambiguity, mutation, and path escape", async () => {
+  const mailbox = JSON.parse(await readFile(new URL("../../docs/flock/MAILBOX.json", import.meta.url), "utf8"));
+  const invalid = [];
+
+  invalid.push({ ...structuredClone(mailbox), repository: "courtney/Harvey-Mobile" });
+  invalid.push({ ...structuredClone(mailbox), packet_checkpoint_sha: "main" });
+
+  const mutableUrl = structuredClone(mailbox);
+  mutableUrl.entries[0].raw_url = mutableUrl.entries[0].raw_url.replace(mailbox.packet_checkpoint_sha, "main");
+  invalid.push(mutableUrl);
+
+  const escapedPath = structuredClone(mailbox);
+  escapedPath.entries[0].packet_path = "docs/flock/packets/%2e%2e/STATE.json";
+  invalid.push(escapedPath);
+
+  const ambiguous = structuredClone(mailbox);
+  ambiguous.entries[1].aliases.push("BEAN@MEDULLINA");
+  invalid.push(ambiguous);
+
+  const effectClaim = structuredClone(mailbox);
+  effectClaim.effect_flags.executed = true;
+  invalid.push(effectClaim);
+
+  const externalDelivery = structuredClone(mailbox);
+  externalDelivery.external_ender_state = "DELIVERED";
+  invalid.push(externalDelivery);
+
+  invalid.forEach((candidate) => assert.throws(() => validateFlockMailbox(candidate)));
+
+  const digestMismatch = {
+    [mailbox.entries[0].packet_path]: {
+      text: mailbox.entries[0].packet_id + " " + mailbox.entries[0].cycle,
+      sha256: "0".repeat(64),
+    },
+  };
+  assert.throws(
+    () => validateFlockMailbox(mailbox, digestMismatch),
+    (error) => error instanceof MailboxResolutionError && error.code === "PACKET_MISMATCH",
+  );
+});
+
+test("mailbox CI proof reads every packet from the declared commit", async () => {
+  const receipt = await verifyFlockMailbox();
+  assert.deepEqual(receipt, {
+    ok: true,
+    state: "IMMUTABLE_PACKETS_VERIFIED",
+    packetCheckpointSha: "8260b18d0358bcd99ec08749e06695e798e172f5",
+    packetCount: 3,
+    transport: "NONE",
+    executionOwner: "CODEX_ROOT",
+    externalEnderState: "BLOCKED_UNBOUND",
+    effects: {
+      dispatched: false,
+      requested: false,
+      executed: false,
+      verified: false,
+      canonWritten: false,
+      merged: false,
+      deployed: false,
+      hosted: false,
+    },
+  });
 });
