@@ -23,6 +23,8 @@ jobs:
           cache: npm
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
+      - name: Verify immutable Flock mailbox
+        run: npm run verify:flock-mailbox
       - name: Run behavior contracts
         run: npm run test:contracts
       - name: Typecheck
