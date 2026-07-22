@@ -11,7 +11,8 @@
     "test:contracts": "node --experimental-strip-types --test tests/contracts/contracts.test.mjs",
     "typecheck": "tsc --noEmit",
     "export:android": "expo export --platform android --output-dir dist/android",
-    "export:web": "expo export --platform web --output-dir dist/web"
+    "export:web": "expo export --platform web --output-dir dist/web",
+    "verify:flock-mailbox": "node --experimental-strip-types scripts/validate-flock-mailbox.mjs"
   },
   "dependencies": {
     "expo": "~57.0.4",
