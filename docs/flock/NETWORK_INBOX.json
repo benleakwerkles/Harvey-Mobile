@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "project_id": "HARVEY_MOBILE_SANDBOX",
+  "repository": "benleakwerkles/Harvey-Mobile",
+  "inbox_path": "docs/flock/NETWORK_INBOX.json",
+  "current_branch": "codex/harvey-mobile-vpg-20260719",
+  "observed_at": "2026-07-29T16:00:00.000Z",
+  "execution_owner": "CODEX_ROOT",
+  "work_mode": "CLOUD_ONLY",
+  "transport": "NONE",
+  "state": "UNOBSERVED",
+  "truth": "NO_AUTHENTICATED_SWANSON_INVITATION_OBSERVED",
+  "topology": {
+    "expected_sender_role": "SWANSON",
+    "expected_sender_machine": "DOSS",
+    "expected_sender_address": "SWANSON@DOSS",
+    "receiver_role": "DINK",
+    "receiver_machine": "MEDULLINA",
+    "receiver_address": "DINK@MEDULLINA"
+  },
+  "canonical_source": {
+    "repository": "benleakwerkles/Werkles",
+    "repository_id": 1242158598,
+    "branch": "main",
+    "path_prefix": "Harvey/Flock/",
+    "requires_full_commit_sha": true
+  },
+  "state_ladder": ["UNOBSERVED", "DISCOVERED", "RECEIVED", "ACCEPTED", "JOINED"],
+  "last_accepted_sequence": 0,
+  "accepted_invitation_ids": [],
+  "accepted_payload_sha256": [],
+  "effect_flags": {
+    "discovered": false,
+    "received": false,
+    "accepted": false,
+    "joined": false,
+    "dispatched": false,
+    "executed": false,
+    "verified": false,
+    "canon_written": false,
+    "merged": false,
+    "deployed": false,
+    "hosted": false
+  },
+  "invitations": []
+}
