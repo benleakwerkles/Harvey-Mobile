@@ -1,5 +1,5 @@
 import type { BuildIdentity } from "./buildIdentity";
-import { serializeEvidenceBundle, type EvidenceBundle } from "./evidenceBundle";
+import { serializeEvidenceBundle, type EvidenceBundle } from "./evidenceBundle.ts";
 
 export const PROMOTION_EVIDENCE_MAX_AGE_DAYS = 7;
 export type PromotionReadinessState = "READY_FOR_HUMAN_REVIEW" | "PENDING_HUMAN_GATE";
