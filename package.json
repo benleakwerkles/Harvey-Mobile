@@ -8,11 +8,12 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test:contracts": "node --experimental-strip-types --test tests/contracts/contracts.test.mjs",
+    "test:contracts": "node --experimental-strip-types --test tests/contracts/contracts.test.mjs tests/contracts/flock-network.test.mjs",
     "typecheck": "tsc --noEmit",
     "export:android": "expo export --platform android --output-dir dist/android",
     "export:web": "expo export --platform web --output-dir dist/web",
-    "verify:flock-mailbox": "node --experimental-strip-types scripts/validate-flock-mailbox.mjs"
+    "verify:flock-mailbox": "node --experimental-strip-types scripts/validate-flock-mailbox.mjs",
+    "verify:flock-network": "node --experimental-strip-types scripts/validate-flock-network-inbox.mjs"
   },
   "dependencies": {
     "expo": "~57.0.4",
