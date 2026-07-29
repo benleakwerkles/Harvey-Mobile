@@ -4,18 +4,21 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { BuildIdentity } from "../data/buildIdentity";
 import { compareBundleToProof, type CloudProofView } from "../data/cloudProofSnapshot";
 import type { EvidenceBundle } from "../data/evidenceBundle";
+import type { ConsolidatedCycleReceipt } from "../data/consolidatedCycleReceipt";
+import type { ResilienceFreshnessView } from "../data/resilienceFreshness";
 import type { FlockRelayView } from "../data/flockRelaySnapshot";
 import type { OperationIntentReceipt } from "../data/operationIntent";
 import { getPromotionReadinessView } from "../data/promotionReadiness";
 import { FlockRelaySnapshotCard } from "./FlockRelaySnapshotCard";
 import { OperationReceiptHistory } from "./OperationReceiptHistory";
 import { PromotionReadinessCard } from "./PromotionReadinessCard";
+import { ReceiptTimelineCard } from "./ReceiptTimelineCard";
 import { SafeEvidenceBundleCard } from "./SafeEvidenceBundleCard";
 
 type EvidenceMode = "Relay" | "Operations" | "Cloud proof";
-type Props = Readonly<{ buildIdentity: BuildIdentity; cloudProof: CloudProofView; operationReceipt: OperationIntentReceipt | null; relay: FlockRelayView; evidenceBundle: EvidenceBundle; evidenceBundleText: string }>;
+type Props = Readonly<{ buildIdentity: BuildIdentity; cloudProof: CloudProofView; operationReceipt: OperationIntentReceipt | null; relay: FlockRelayView; evidenceBundle: EvidenceBundle; evidenceBundleText: string; cycleReceipt: ConsolidatedCycleReceipt | null; evidenceFreshness: ResilienceFreshnessView }>;
 
-export function EvidenceHub({ buildIdentity, cloudProof, operationReceipt, relay, evidenceBundle, evidenceBundleText }: Props) {
+export function EvidenceHub({ buildIdentity, cloudProof, operationReceipt, relay, evidenceBundle, evidenceBundleText, cycleReceipt, evidenceFreshness }: Props) {
   const [mode, setMode] = useState<EvidenceMode>("Relay");
   const bundleCoverage = compareBundleToProof(buildIdentity, cloudProof);
   const promotionReadiness = getPromotionReadinessView({ evidenceBundle, buildIdentity, now: new Date() });
@@ -41,6 +44,7 @@ export function EvidenceHub({ buildIdentity, cloudProof, operationReceipt, relay
           </View>
           <SafeEvidenceBundleCard bundle={evidenceBundle} serialized={evidenceBundleText} />
           <PromotionReadinessCard view={promotionReadiness} />
+          <ReceiptTimelineCard freshness={evidenceFreshness} receipt={cycleReceipt} />
           <View style={styles.compare}>
             <Text style={styles.label}>THIS BUNDLE TREE</Text><Text selectable style={styles.sha}>{buildIdentity.sha ?? buildIdentity.truthLabel}</Text>
             <Text style={styles.label}>LAST PROVEN ARTIFACT TREE</Text><Text selectable style={styles.sha}>{cloudProof.implementationSha}</Text>
