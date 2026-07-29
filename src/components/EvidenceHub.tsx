@@ -6,8 +6,10 @@ import { compareBundleToProof, type CloudProofView } from "../data/cloudProofSna
 import type { EvidenceBundle } from "../data/evidenceBundle";
 import type { FlockRelayView } from "../data/flockRelaySnapshot";
 import type { OperationIntentReceipt } from "../data/operationIntent";
+import { getPromotionReadinessView } from "../data/promotionReadiness";
 import { FlockRelaySnapshotCard } from "./FlockRelaySnapshotCard";
 import { OperationReceiptHistory } from "./OperationReceiptHistory";
+import { PromotionReadinessCard } from "./PromotionReadinessCard";
 import { SafeEvidenceBundleCard } from "./SafeEvidenceBundleCard";
 
 type EvidenceMode = "Relay" | "Operations" | "Cloud proof";
@@ -16,6 +18,7 @@ type Props = Readonly<{ buildIdentity: BuildIdentity; cloudProof: CloudProofView
 export function EvidenceHub({ buildIdentity, cloudProof, operationReceipt, relay, evidenceBundle, evidenceBundleText }: Props) {
   const [mode, setMode] = useState<EvidenceMode>("Relay");
   const bundleCoverage = compareBundleToProof(buildIdentity, cloudProof);
+  const promotionReadiness = getPromotionReadinessView({ evidenceBundle, buildIdentity, now: new Date() });
   return (
     <>
       <View style={styles.heading}><Text style={styles.eyebrow}>EVIDENCE</Text><Text style={styles.title}>What is actually proven?</Text></View>
@@ -37,6 +40,7 @@ export function EvidenceHub({ buildIdentity, cloudProof, operationReceipt, relay
             <Text style={styles.copy}>Successful runs and digests prove recorded sandbox artifacts for this SHA only. Current availability is unproven.</Text>
           </View>
           <SafeEvidenceBundleCard bundle={evidenceBundle} serialized={evidenceBundleText} />
+          <PromotionReadinessCard view={promotionReadiness} />
           <View style={styles.compare}>
             <Text style={styles.label}>THIS BUNDLE TREE</Text><Text selectable style={styles.sha}>{buildIdentity.sha ?? buildIdentity.truthLabel}</Text>
             <Text style={styles.label}>LAST PROVEN ARTIFACT TREE</Text><Text selectable style={styles.sha}>{cloudProof.implementationSha}</Text>
