@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "project_id": "HARVEY_MOBILE_SANDBOX",
+  "repository": "benleakwerkles/Harvey-Mobile",
+  "mailbox_path": "docs/flock/MAILBOX.json",
+  "current_branch": "codex/harvey-mobile-vpg-20260719",
+  "packet_checkpoint_sha": "b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a",
+  "observed_at": "2026-07-29T17:00:00.000Z",
+  "execution_owner": "CODEX_ROOT",
+  "work_mode": "CLOUD_ONLY",
+  "transport": "NONE",
+  "availability": "PENDING_PR_MERGE",
+  "stable_default_branch_url": "https://github.com/benleakwerkles/Harvey-Mobile/blob/main/docs/flock/MAILBOX.json",
+  "discovery_truth": "FOUND_DOES_NOT_IMPLY_PULLED_OR_RECEIPTED",
+  "external_ender_state": "BLOCKED_UNBOUND",
+  "effect_flags": {
+    "dispatched": false,
+    "requested": false,
+    "executed": false,
+    "verified": false,
+    "canon_written": false,
+    "merged": false,
+    "deployed": false,
+    "hosted": false
+  },
+  "entries": [
+    {
+      "canonical_address": "BEAN_THUFIR@MEDULLINA",
+      "aliases": [
+        "BEAN@MEDULLINA",
+        "THUFIR@MEDULLINA"
+      ],
+      "packet_id": "F_BEAN_THUFIR_HARVEY_MOBILE_NETWORK_TRUST_AUDIT_20260729_C6",
+      "cycle": "HARVEY_MOBILE_VPG_C6",
+      "packet_commit_sha": "b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a",
+      "packet_path": "docs/flock/packets/F_BEAN_THUFIR_HARVEY_MOBILE_NETWORK_TRUST_AUDIT_20260729_C6.md",
+      "packet_sha256": "630201f8e84fd0a632ff10281781234b60fc4b7b9d6a60688fd775b129747c0a",
+      "discovery_state": "FOUND",
+      "pull_proof": "READ_ONLY_ROLE_AGENT",
+      "internal_role_agent": true,
+      "blob_url": "https://github.com/benleakwerkles/Harvey-Mobile/blob/b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a/docs/flock/packets/F_BEAN_THUFIR_HARVEY_MOBILE_NETWORK_TRUST_AUDIT_20260729_C6.md",
+      "raw_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a/docs/flock/packets/F_BEAN_THUFIR_HARVEY_MOBILE_NETWORK_TRUST_AUDIT_20260729_C6.md"
+    },
+    {
+      "canonical_address": "CURSOR_ENDER_DOOZER@MEDULLINA",
+      "aliases": [
+        "CURSOR@MEDULLINA",
+        "ENDER@MEDULLINA",
+        "DOOZER@MEDULLINA"
+      ],
+      "packet_id": "F_CURSOR_ENDER_HARVEY_MOBILE_NETWORK_PEER_UX_20260729_C6",
+      "cycle": "HARVEY_MOBILE_VPG_C6",
+      "packet_commit_sha": "b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a",
+      "packet_path": "docs/flock/packets/F_CURSOR_ENDER_HARVEY_MOBILE_NETWORK_PEER_UX_20260729_C6.md",
+      "packet_sha256": "5449fbce5944c710b7430ada8bcf93c87f6fd52c5e7d156f0c42a5524dc226f8",
+      "discovery_state": "FOUND",
+      "pull_proof": "READ_ONLY_ROLE_AGENT",
+      "internal_role_agent": true,
+      "blob_url": "https://github.com/benleakwerkles/Harvey-Mobile/blob/b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a/docs/flock/packets/F_CURSOR_ENDER_HARVEY_MOBILE_NETWORK_PEER_UX_20260729_C6.md",
+      "raw_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a/docs/flock/packets/F_CURSOR_ENDER_HARVEY_MOBILE_NETWORK_PEER_UX_20260729_C6.md"
+    },
+    {
+      "canonical_address": "DINK@MEDULLINA",
+      "aliases": [],
+      "packet_id": "F_DINK_HARVEY_MOBILE_NETWORK_INGRESS_20260729_C6",
+      "cycle": "HARVEY_MOBILE_VPG_C6",
+      "packet_commit_sha": "b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a",
+      "packet_path": "docs/flock/packets/F_DINK_HARVEY_MOBILE_NETWORK_INGRESS_20260729_C6.md",
+      "packet_sha256": "2ba9b7861e4a91ce29b194d79bf718761328dcca715b593a98243e494f691d40",
+      "discovery_state": "FOUND",
+      "pull_proof": "READ_ONLY_ROLE_AGENT",
+      "internal_role_agent": true,
+      "blob_url": "https://github.com/benleakwerkles/Harvey-Mobile/blob/b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a/docs/flock/packets/F_DINK_HARVEY_MOBILE_NETWORK_INGRESS_20260729_C6.md",
+      "raw_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a/docs/flock/packets/F_DINK_HARVEY_MOBILE_NETWORK_INGRESS_20260729_C6.md"
+    }
+  ]
+}
