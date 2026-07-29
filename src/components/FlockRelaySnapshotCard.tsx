@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
+import { FlockNetworkPeersCard } from "./FlockNetworkPeersCard";
+
 import type { FlockRelayView } from "../data/flockRelaySnapshot";
 
 type FlockRelaySnapshotCardProps = Readonly<{ snapshot: FlockRelayView }>;
@@ -50,6 +52,8 @@ export function FlockRelaySnapshotCard({ snapshot }: FlockRelaySnapshotCardProps
           FOUND means located only. It does not mean pulled, receipted, dispatched, executed, or delivered.
         </Text>
       </View>
+
+      <FlockNetworkPeersCard />
 
       <View style={styles.heading}>
         <Text style={styles.eyebrow}>COMMITTED RELAY SNAPSHOT</Text>
