@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { CommandBoard, type BuildTask } from "../src/components/CommandBoard";
+import { CommandBoard } from "../src/components/CommandBoard";
 import { EvidenceHub } from "../src/components/EvidenceHub";
 import { OperationsHub } from "../src/components/OperationsHub";
 import { QuickCapture, type SessionCapture } from "../src/components/QuickCapture";
 import type { CaptureDraftMetadata } from "../src/components/CaptureTriageBar";
 import { BUILD_IDENTITY } from "../src/data/buildIdentity";
+import { addBuildQueueItem, advanceBuildQueueStatus, createBuildQueueItem, getBuildQueueView, reprioritizeBuildQueueItem, type BuildQueueItem, type BuildQueuePriority } from "../src/data/buildQueue";
 import { CLOUD_PROOF_SNAPSHOT, getCloudProofView } from "../src/data/cloudProofSnapshot";
 import { FLOCK_RELAY_SNAPSHOT, getFlockRelayView } from "../src/data/flockRelaySnapshot";
 import { createCaptureDraftReceipt, type CaptureDraftReceipt } from "../src/data/captureDraft";
@@ -26,16 +27,16 @@ const SNAPSHOT: ProjectSnapshot = Object.freeze({
   truth: "SNAPSHOT_NOT_LIVE",
 });
 
-const STARTING_TASKS: readonly BuildTask[] = Object.freeze([
-  Object.freeze({ id: "1", title: "Prove the sandbox command board", area: "Mobile shell", done: true }),
-  Object.freeze({ id: "2", title: "Document the external Ender receiver boundary", area: "Flock relay", done: false }),
-  Object.freeze({ id: "3", title: "Verify secret-safe local capture", area: "Capture", done: false }),
-  Object.freeze({ id: "4", title: "Prepare sandbox promotion-gate evidence", area: "Cloud proof", done: false }),
+const STARTING_QUEUE: readonly BuildQueueItem[] = Object.freeze([
+  createBuildQueueItem({ id: "build-command-board", title: "Review the sandbox command board", area: "Mobile shell", priority: "P1", createdAt: "2026-07-29T14:58:00.000Z" }),
+  createBuildQueueItem({ id: "build-receiver-boundary", title: "Document the external Ender receiver boundary", area: "Flock relay", priority: "P1", createdAt: "2026-07-29T14:59:00.000Z" }),
+  createBuildQueueItem({ id: "build-capture-contracts", title: "Verify secret-safe local capture", area: "Capture", priority: "P0", createdAt: "2026-07-29T15:00:00.000Z" }),
+  createBuildQueueItem({ id: "build-promotion-evidence", title: "Prepare sandbox promotion-gate evidence", area: "Cloud proof", priority: "P2", createdAt: "2026-07-29T15:01:00.000Z" }),
 ]);
 
 export default function HarveyHome() {
   const [mode, setMode] = useState<Mode>("Home");
-  const [tasks, setTasks] = useState<readonly BuildTask[]>(STARTING_TASKS);
+  const [queueItems, setQueueItems] = useState<readonly BuildQueueItem[]>(STARTING_QUEUE);
   const [draft, setDraft] = useState("");
   const [captures, setCaptures] = useState<readonly SessionCapture[]>([]);
   const [triageItems, setTriageItems] = useState<readonly CaptureTriageItem[]>([]);
@@ -46,10 +47,13 @@ export default function HarveyHome() {
   const relay = useMemo(() => getFlockRelayView(FLOCK_RELAY_SNAPSHOT, new Date()), []);
   const cloudProof = useMemo(() => getCloudProofView(CLOUD_PROOF_SNAPSHOT), []);
   const cockpit = useMemo(() => getProjectCockpitView(PROJECT_COCKPIT_SNAPSHOT, new Date()), []);
+  const buildQueue = useMemo(() => getBuildQueueView(queueItems), [queueItems]);
 
-  const toggleTask = (taskId: string) => {
-    setTasks((current) => current.map((task) => (task.id === taskId ? { ...task, done: !task.done } : task)));
+  const addBuildTask = (title: string, priority: BuildQueuePriority) => {
+    setQueueItems((current) => addBuildQueueItem(current, createBuildQueueItem({ id: `build-session-${current.length + 1}`, title, area: "Session queue", priority, createdAt: new Date().toISOString() })));
   };
+  const advanceBuildTask = (id: string) => setQueueItems((current) => advanceBuildQueueStatus(current, id));
+  const reprioritizeBuildTask = (id: string, priority: BuildQueuePriority) => setQueueItems((current) => reprioritizeBuildQueueItem(current, id, priority));
 
   const changeDraft = (value: string) => {
     setDraft(value);
@@ -104,15 +108,15 @@ export default function HarveyHome() {
 
         {mode === "Home" ? (
           <>
-            <CommandBoard buildIdentity={BUILD_IDENTITY} cockpit={cockpit} snapshot={snapshot} tasks={tasks} variant="home" onToggleTask={toggleTask} />
+            <CommandBoard buildIdentity={BUILD_IDENTITY} cockpit={cockpit} onAddTask={addBuildTask} onAdvanceTask={advanceBuildTask} onReprioritizeTask={reprioritizeBuildTask} queue={buildQueue} snapshot={snapshot} variant="home" />
             <View style={styles.stats}>
-              <View style={styles.stat}><Text style={styles.statValue}>{tasks.filter((task) => !task.done).length}</Text><Text style={styles.small}>Open moves</Text></View>
+              <View style={styles.stat}><Text style={styles.statValue}>{buildQueue.openCount}</Text><Text style={styles.small}>Open moves</Text></View>
               <View style={styles.stat}><Text style={styles.captureCount}>{captures.length}</Text><Text style={styles.small}>Session captures</Text></View>
             </View>
           </>
         ) : null}
 
-        {mode === "Build" ? <CommandBoard buildIdentity={BUILD_IDENTITY} cockpit={cockpit} snapshot={snapshot} tasks={tasks} variant="build" onToggleTask={toggleTask} /> : null}
+        {mode === "Build" ? <CommandBoard buildIdentity={BUILD_IDENTITY} cockpit={cockpit} onAddTask={addBuildTask} onAdvanceTask={advanceBuildTask} onReprioritizeTask={reprioritizeBuildTask} queue={buildQueue} snapshot={snapshot} variant="build" /> : null}
         {mode === "Operate" ? <OperationsHub onClearIntent={() => setOperationReceipt(null)} onCreateIntent={createLocalOperationReceipt} receipt={operationReceipt} sourcePath={SNAPSHOT.sourcePath} sourceSha={SNAPSHOT.sourceSha} /> : null}
         {mode === "Capture" ? <QuickCapture captures={captures} draft={draft} error={captureError} onAdvanceTriage={advanceTriage} onClearReceipt={() => setReceipt(null)} onCreateReceipt={createReceipt} onDraftChange={changeDraft} receipt={receipt} triageItems={triageItems} /> : null}
         {mode === "Evidence" ? <EvidenceHub buildIdentity={BUILD_IDENTITY} cloudProof={cloudProof} operationReceipt={operationReceipt} relay={relay} /> : null}
