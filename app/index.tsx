@@ -4,6 +4,7 @@ import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "rea
 import { CommandBoard } from "../src/components/CommandBoard";
 import { DailyMissionCard } from "../src/components/DailyMissionCard";
 import { FieldBriefCard } from "../src/components/FieldBriefCard";
+import { ShiftHandoffCard } from "../src/components/ShiftHandoffCard";
 import { EvidenceHub } from "../src/components/EvidenceHub";
 import { OperationsHub } from "../src/components/OperationsHub";
 import { QuickCapture, type SessionCapture } from "../src/components/QuickCapture";
@@ -20,6 +21,7 @@ import { getResilienceFreshnessView } from "../src/data/resilienceFreshness";
 import { getPromotionReadinessView } from "../src/data/promotionReadiness";
 import { acknowledgeDailyMission, advanceDailyMissionFocus, createDailyMissionSession, getDailyMissionView } from "../src/data/dailyMission";
 import { advanceFieldBriefFocus, getFieldBriefView, resetFieldBriefSession, reviewFieldBriefItem } from "../src/data/fieldBrief";
+import { advanceShiftHandoffFocus, getShiftHandoffView, resetShiftHandoffSession, reviewShiftHandoffItem } from "../src/data/shiftHandoff";
 import { createOperationIntent, type OperationActionId, type OperationIntentReceipt } from "../src/data/operationIntent";
 import { PROJECT_COCKPIT_SNAPSHOT, getProjectCockpitView } from "../src/data/projectCockpit";
 import { getProjectSnapshotView, type ProjectSnapshot } from "../src/data/projectSnapshot";
@@ -68,6 +70,9 @@ export default function HarveyHome() {
   useEffect(() => setDailyMissionSession(createDailyMissionSession(dailyMission)), [dailyMission]);
   const [fieldBriefSession, setFieldBriefSession] = useState(() => resetFieldBriefSession(fieldBrief));
   useEffect(() => setFieldBriefSession(resetFieldBriefSession(fieldBrief)), [fieldBrief.identityKey]);
+  const shiftHandoff = useMemo(() => getShiftHandoffView({ fieldBrief, fieldBriefSession, buildIdentity: BUILD_IDENTITY, now: dailyMissionNow }), [dailyMissionNow, fieldBrief, fieldBriefSession]);
+  const [shiftHandoffSession, setShiftHandoffSession] = useState(() => resetShiftHandoffSession(shiftHandoff));
+  useEffect(() => setShiftHandoffSession(resetShiftHandoffSession(shiftHandoff)), [shiftHandoff.identityKey]);
   const cycleReceipt = useMemo(() => createConsolidatedCycleReceipt({ sourcePath: "docs/flock/packets/F_DINK_CONSOLIDATED_RECEIPT_MODEL_20260729_C12_B.md", sourceSha: "a56cd9daff46fdbb3477fa38de1dd3e307d00f31", createdAt: new Date(), cycles: C7_C12_CHECKPOINTS }), []);
 
   const addBuildTask = (title: string, priority: BuildQueuePriority) => {
@@ -111,6 +116,8 @@ export default function HarveyHome() {
   const advanceMissionFocus = () => setDailyMissionSession((current) => advanceDailyMissionFocus(dailyMission, current));
   const reviewBriefItem = (itemId: string) => setFieldBriefSession((current) => reviewFieldBriefItem(fieldBrief, current, itemId));
   const advanceBriefFocus = () => setFieldBriefSession((current) => advanceFieldBriefFocus(fieldBrief, current));
+  const reviewHandoffItem = (itemId: string) => setShiftHandoffSession((current) => reviewShiftHandoffItem(shiftHandoff, current, itemId));
+  const advanceHandoffFocus = () => setShiftHandoffSession((current) => advanceShiftHandoffFocus(shiftHandoff, current));
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -136,6 +143,7 @@ export default function HarveyHome() {
           <>
             <DailyMissionCard onAcknowledge={acknowledgeMission} onAdvanceFocus={advanceMissionFocus} session={dailyMissionSession} view={dailyMission} />
             <FieldBriefCard onAdvanceFocus={advanceBriefFocus} onReview={reviewBriefItem} session={fieldBriefSession} view={fieldBrief} />
+            <ShiftHandoffCard onAdvanceFocus={advanceHandoffFocus} onReview={reviewHandoffItem} session={shiftHandoffSession} view={shiftHandoff} />
             <CommandBoard buildIdentity={BUILD_IDENTITY} cockpit={cockpit} onAddTask={addBuildTask} onAdvanceTask={advanceBuildTask} onReprioritizeTask={reprioritizeBuildTask} queue={buildQueue} snapshot={snapshot} variant="home" />
             <View style={styles.stats}>
               <View style={styles.stat}><Text style={styles.statValue}>{buildQueue.openCount}</Text><Text style={styles.small}>Open moves</Text></View>
