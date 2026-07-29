@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { CommandBoard } from "../src/components/CommandBoard";
+import { DailyMissionCard } from "../src/components/DailyMissionCard";
 import { EvidenceHub } from "../src/components/EvidenceHub";
 import { OperationsHub } from "../src/components/OperationsHub";
 import { QuickCapture, type SessionCapture } from "../src/components/QuickCapture";
@@ -15,6 +16,8 @@ import { advanceCaptureTriageStatus, createCaptureTriageItem, getCaptureTriageVi
 import { createEvidenceBundle, serializeEvidenceBundle } from "../src/data/evidenceBundle";
 import { C7_C12_CHECKPOINTS, createConsolidatedCycleReceipt } from "../src/data/consolidatedCycleReceipt";
 import { getResilienceFreshnessView } from "../src/data/resilienceFreshness";
+import { getPromotionReadinessView } from "../src/data/promotionReadiness";
+import { acknowledgeDailyMission, advanceDailyMissionFocus, createDailyMissionSession, getDailyMissionView } from "../src/data/dailyMission";
 import { createOperationIntent, type OperationActionId, type OperationIntentReceipt } from "../src/data/operationIntent";
 import { PROJECT_COCKPIT_SNAPSHOT, getProjectCockpitView } from "../src/data/projectCockpit";
 import { getProjectSnapshotView, type ProjectSnapshot } from "../src/data/projectSnapshot";
@@ -55,6 +58,11 @@ export default function HarveyHome() {
   const evidenceBundle = useMemo(() => createEvidenceBundle({ sourcePath: "docs/flock/packets/F_DINK_EVIDENCE_BUNDLE_MODEL_20260729_C10_A.md", sourceSha: "595dcef7dbbe3a3c42091e665af284cfb6e0d665", observedAt: "2026-07-29T15:08:02.000Z", createdAt: new Date(), buildIdentity: BUILD_IDENTITY, cockpit, buildQueue, captureTriage, relay }), [buildQueue, captureTriage, cockpit, relay]);
   const evidenceBundleText = useMemo(() => serializeEvidenceBundle(evidenceBundle), [evidenceBundle]);
   const evidenceFreshness = useMemo(() => getResilienceFreshnessView({ subject: "EVIDENCE_BUNDLE", observedAt: evidenceBundle.provenance.observedAt, now: new Date() }), [evidenceBundle]);
+  const dailyMissionNow = useMemo(() => evidenceFreshness.checkedAt ? new Date(evidenceFreshness.checkedAt) : new Date(Number.NaN), [evidenceFreshness.checkedAt]);
+  const promotionReadiness = useMemo(() => getPromotionReadinessView({ evidenceBundle, buildIdentity: BUILD_IDENTITY, now: dailyMissionNow }), [dailyMissionNow, evidenceBundle]);
+  const dailyMission = useMemo(() => getDailyMissionView({ buildQueue, cockpit, evidenceFreshness, promotionReadiness, now: dailyMissionNow }), [buildQueue, cockpit, dailyMissionNow, evidenceFreshness, promotionReadiness]);
+  const [dailyMissionSession, setDailyMissionSession] = useState(() => createDailyMissionSession(dailyMission));
+  useEffect(() => setDailyMissionSession(createDailyMissionSession(dailyMission)), [dailyMission]);
   const cycleReceipt = useMemo(() => createConsolidatedCycleReceipt({ sourcePath: "docs/flock/packets/F_DINK_CONSOLIDATED_RECEIPT_MODEL_20260729_C12_B.md", sourceSha: "a56cd9daff46fdbb3477fa38de1dd3e307d00f31", createdAt: new Date(), cycles: C7_C12_CHECKPOINTS }), []);
 
   const addBuildTask = (title: string, priority: BuildQueuePriority) => {
@@ -94,6 +102,9 @@ export default function HarveyHome() {
     setOperationReceipt(createOperationIntent({ actionId, sourcePath: SNAPSHOT.sourcePath, sourceSha: SNAPSHOT.sourceSha, now: new Date() }));
   };
 
+  const acknowledgeMission = (missionId: string) => setDailyMissionSession((current) => acknowledgeDailyMission(dailyMission, current, missionId));
+  const advanceMissionFocus = () => setDailyMissionSession((current) => advanceDailyMissionFocus(dailyMission, current));
+
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.page} keyboardShouldPersistTaps="handled">
@@ -116,6 +127,7 @@ export default function HarveyHome() {
 
         {mode === "Home" ? (
           <>
+            <DailyMissionCard onAcknowledge={acknowledgeMission} onAdvanceFocus={advanceMissionFocus} session={dailyMissionSession} view={dailyMission} />
             <CommandBoard buildIdentity={BUILD_IDENTITY} cockpit={cockpit} onAddTask={addBuildTask} onAdvanceTask={advanceBuildTask} onReprioritizeTask={reprioritizeBuildTask} queue={buildQueue} snapshot={snapshot} variant="home" />
             <View style={styles.stats}>
               <View style={styles.stat}><Text style={styles.statValue}>{buildQueue.openCount}</Text><Text style={styles.small}>Open moves</Text></View>
