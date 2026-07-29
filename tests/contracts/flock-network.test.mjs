@@ -59,7 +59,7 @@ function invitationFor(state = "DISCOVERED", overrides = {}) {
     source_commit_sha: SOURCE_SHA,
     source_path: SOURCE_PATH,
     content_url:
-      \`https://github.com/benleakwerkles/Werkles/blob/\${SOURCE_SHA}/\${SOURCE_PATH}\`,
+      `https://github.com/benleakwerkles/Werkles/blob/${SOURCE_SHA}/${SOURCE_PATH}`,
     payload_sha256: PAYLOAD_SHA,
     observed_at: "2026-07-29T16:00:00.000Z",
     expires_at: "2026-07-30T16:00:00.000Z",
@@ -251,7 +251,7 @@ test("short commits, mutable source branches, and mismatched URLs are rejected",
 
   const branchUrl = inboxFor(invitationFor());
   branchUrl.invitations[0].content_url =
-    \`https://github.com/benleakwerkles/Werkles/blob/main/\${SOURCE_PATH}\`;
+    `https://github.com/benleakwerkles/Werkles/blob/main/${SOURCE_PATH}`;
 
   expectCode("MUTABLE_REF", () =>
     validateFlockNetworkInbox(branchUrl, NOW, evidenceFor(branchUrl)),
@@ -259,7 +259,7 @@ test("short commits, mutable source branches, and mismatched URLs are rejected",
 
   const mismatchedUrl = inboxFor(invitationFor());
   mismatchedUrl.invitations[0].content_url =
-    \`https://github.com/benleakwerkles/Werkles/blob/\${"d".repeat(40)}/\${SOURCE_PATH}\`;
+    `https://github.com/benleakwerkles/Werkles/blob/${"d".repeat(40)}/${SOURCE_PATH}`;
 
   expectCode("MUTABLE_REF", () =>
     validateFlockNetworkInbox(
