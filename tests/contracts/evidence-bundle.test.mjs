@@ -19,7 +19,7 @@ function validInput() {
   const receiptResult = createCaptureDraftReceipt("Opaque session text excluded from evidence.", new Date("2026-07-29T19:40:00.000Z"));
   assert.equal(receiptResult.ok, true);
   if (!receiptResult.ok) throw new Error("Expected receipt");
-  const queue = createBuildQueueItem({ id:"evidence", title:"Verify safe evidence bundle", area:"Cloud proof", priority:"P0", createdAt:"2026-07-29T19:30:00.000Z" });
+  const queue = createBuildQueueItem({ id:"build-evidence-bundle", title:"Verify safe evidence bundle", area:"Cloud proof", priority:"P0", createdAt:"2026-07-29T19:30:00.000Z" });
   const triage = createCaptureTriageItem({ receipt:receiptResult.receipt, category:"BUILD", priority:"NOW" });
   return { sourcePath:SOURCE_PATH, sourceSha:SOURCE_SHA, observedAt:"2026-07-29T19:59:00.000Z", createdAt:CREATED, buildIdentity:getBuildIdentity("a".repeat(40)), cockpit:getProjectCockpitView(PROJECT_COCKPIT_SNAPSHOT, CREATED), buildQueue:getBuildQueueView([queue]), captureTriage:getCaptureTriageView([triage]), relay:getFlockRelayView(FLOCK_RELAY_SNAPSHOT, CREATED) };
 }
