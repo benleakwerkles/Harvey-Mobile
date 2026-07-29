@@ -13,6 +13,8 @@ import { FLOCK_RELAY_SNAPSHOT, getFlockRelayView } from "../src/data/flockRelayS
 import { createCaptureDraftReceipt, type CaptureDraftReceipt } from "../src/data/captureDraft";
 import { advanceCaptureTriageStatus, createCaptureTriageItem, getCaptureTriageView, type CaptureTriageItem } from "../src/data/captureTriage";
 import { createEvidenceBundle, serializeEvidenceBundle } from "../src/data/evidenceBundle";
+import { C7_C12_CHECKPOINTS, createConsolidatedCycleReceipt } from "../src/data/consolidatedCycleReceipt";
+import { getResilienceFreshnessView } from "../src/data/resilienceFreshness";
 import { createOperationIntent, type OperationActionId, type OperationIntentReceipt } from "../src/data/operationIntent";
 import { PROJECT_COCKPIT_SNAPSHOT, getProjectCockpitView } from "../src/data/projectCockpit";
 import { getProjectSnapshotView, type ProjectSnapshot } from "../src/data/projectSnapshot";
@@ -52,6 +54,8 @@ export default function HarveyHome() {
   const captureTriage = useMemo(() => getCaptureTriageView(triageItems), [triageItems]);
   const evidenceBundle = useMemo(() => createEvidenceBundle({ sourcePath: "docs/flock/packets/F_DINK_EVIDENCE_BUNDLE_MODEL_20260729_C10_A.md", sourceSha: "595dcef7dbbe3a3c42091e665af284cfb6e0d665", observedAt: "2026-07-29T15:08:02.000Z", createdAt: new Date(), buildIdentity: BUILD_IDENTITY, cockpit, buildQueue, captureTriage, relay }), [buildQueue, captureTriage, cockpit, relay]);
   const evidenceBundleText = useMemo(() => serializeEvidenceBundle(evidenceBundle), [evidenceBundle]);
+  const evidenceFreshness = useMemo(() => getResilienceFreshnessView({ subject: "EVIDENCE_BUNDLE", observedAt: evidenceBundle.provenance.observedAt, now: new Date() }), [evidenceBundle]);
+  const cycleReceipt = useMemo(() => createConsolidatedCycleReceipt({ sourcePath: "docs/flock/packets/F_DINK_CONSOLIDATED_RECEIPT_MODEL_20260729_C12_B.md", sourceSha: "a56cd9daff46fdbb3477fa38de1dd3e307d00f31", createdAt: new Date(), cycles: C7_C12_CHECKPOINTS }), []);
 
   const addBuildTask = (title: string, priority: BuildQueuePriority) => {
     setQueueItems((current) => addBuildQueueItem(current, createBuildQueueItem({ id: `build-session-${current.length + 1}`, title, area: "Session queue", priority, createdAt: new Date().toISOString() })));
@@ -123,7 +127,7 @@ export default function HarveyHome() {
         {mode === "Build" ? <CommandBoard buildIdentity={BUILD_IDENTITY} cockpit={cockpit} onAddTask={addBuildTask} onAdvanceTask={advanceBuildTask} onReprioritizeTask={reprioritizeBuildTask} queue={buildQueue} snapshot={snapshot} variant="build" /> : null}
         {mode === "Operate" ? <OperationsHub onClearIntent={() => setOperationReceipt(null)} onCreateIntent={createLocalOperationReceipt} receipt={operationReceipt} sourcePath={SNAPSHOT.sourcePath} sourceSha={SNAPSHOT.sourceSha} /> : null}
         {mode === "Capture" ? <QuickCapture captures={captures} draft={draft} error={captureError} onAdvanceTriage={advanceTriage} onClearReceipt={() => setReceipt(null)} onCreateReceipt={createReceipt} onDraftChange={changeDraft} receipt={receipt} triageItems={triageItems} /> : null}
-        {mode === "Evidence" ? <EvidenceHub buildIdentity={BUILD_IDENTITY} cloudProof={cloudProof} evidenceBundle={evidenceBundle} evidenceBundleText={evidenceBundleText} operationReceipt={operationReceipt} relay={relay} /> : null}
+        {mode === "Evidence" ? <EvidenceHub buildIdentity={BUILD_IDENTITY} cloudProof={cloudProof} cycleReceipt={cycleReceipt} evidenceBundle={evidenceBundle} evidenceBundleText={evidenceBundleText} evidenceFreshness={evidenceFreshness} operationReceipt={operationReceipt} relay={relay} /> : null}
 
         <Text style={styles.footer}>SANDBOX · BENLEAKWERKLES/HARVEY-MOBILE · NOT CANON</Text>
       </ScrollView>
