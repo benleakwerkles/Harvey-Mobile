@@ -1,7 +1,9 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { BuildIdentity } from "../data/buildIdentity";
+import type { ProjectCockpitView } from "../data/projectCockpit";
 import { calculateProgress, type ProjectSnapshotView } from "../data/projectSnapshot";
+import { ProjectCockpitCard } from "./ProjectCockpitCard";
 
 export type BuildTask = Readonly<{
   id: string;
@@ -12,13 +14,14 @@ export type BuildTask = Readonly<{
 
 type CommandBoardProps = Readonly<{
   buildIdentity: BuildIdentity;
+  cockpit: ProjectCockpitView;
   snapshot: ProjectSnapshotView;
   tasks: readonly BuildTask[];
   variant: "home" | "build";
   onToggleTask: (taskId: string) => void;
 }>;
 
-export function CommandBoard({ buildIdentity, snapshot, tasks, variant, onToggleTask }: CommandBoardProps) {
+export function CommandBoard({ buildIdentity, cockpit, snapshot, tasks, variant, onToggleTask }: CommandBoardProps) {
   const completed = tasks.filter((task) => task.done).length;
   const progress = calculateProgress(tasks);
   const visibleTasks = variant === "home" ? tasks.slice(0, 3) : tasks;
@@ -37,24 +40,20 @@ export function CommandBoard({ buildIdentity, snapshot, tasks, variant, onToggle
         <Text style={styles.sourceLabel}>OBSERVED</Text>
         <Text style={styles.sourceValue}>{snapshot.observedAt}</Text>
         <Text style={styles.freshness}>{snapshot.ageDays} DAYS OLD · {snapshot.freshness}</Text>
-        <Text style={styles.boundary}>
-          Task changes stay in this app session. Reload resets them. No live Werkles connection is claimed.
-        </Text>
+        <Text style={styles.boundary}>Task changes stay in this app session. Reload resets them. No live Werkles connection is claimed.</Text>
       </View>
 
       <View style={styles.buildIdentity}>
         <View style={styles.rowBetween}>
           <Text style={styles.eyebrow}>CLOUD BUNDLE IDENTITY</Text>
-          <Text style={[styles.buildTruth, buildIdentity.state === "CI_BOUND" && styles.boundTruth]}>
-            {buildIdentity.state === "CI_BOUND" ? "BOUND" : "UNBOUND"}
-          </Text>
+          <Text style={[styles.buildTruth, buildIdentity.state === "CI_BOUND" && styles.boundTruth]}>{buildIdentity.state === "CI_BOUND" ? "BOUND" : "UNBOUND"}</Text>
         </View>
         <Text style={styles.sourceLabel}>{buildIdentity.truthLabel}</Text>
         <Text selectable style={styles.sha}>{buildIdentity.sha ?? "No CI SHA in this local session"}</Text>
-        <Text style={styles.boundary}>
-          This identifies the exact exported tree only. Source-head and project-state evidence are separate; no deployment is claimed.
-        </Text>
+        <Text style={styles.boundary}>This identifies the exact exported tree only. Source-head and project-state evidence are separate; no deployment is claimed.</Text>
       </View>
+
+      <ProjectCockpitCard view={cockpit} />
 
       <View style={styles.hero}>
         <View style={styles.rowBetween}>
@@ -62,9 +61,7 @@ export function CommandBoard({ buildIdentity, snapshot, tasks, variant, onToggle
           <Text style={styles.badge}>NON HEARTHLAND</Text>
         </View>
         <Text style={styles.project}>{snapshot.project}</Text>
-        <View style={styles.track}>
-          <View style={[styles.fill, { width: `${progress}%` }]} />
-        </View>
+        <View style={styles.track}><View style={[styles.fill, { width: `${progress}%` }]} /></View>
         <View style={styles.rowBetween}>
           <Text style={styles.small}>{completed} of {tasks.length} moves complete</Text>
           <Text style={styles.percent}>{progress}%</Text>
@@ -77,13 +74,7 @@ export function CommandBoard({ buildIdentity, snapshot, tasks, variant, onToggle
       </View>
 
       {visibleTasks.map((task, index) => (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ selected: task.done }}
-          key={task.id}
-          onPress={() => onToggleTask(task.id)}
-          style={[styles.task, task.done && styles.doneCard]}
-        >
+        <Pressable accessibilityRole="button" accessibilityState={{ selected: task.done }} key={task.id} onPress={() => onToggleTask(task.id)} style={[styles.task, task.done && styles.doneCard]}>
           <Text style={styles.number}>{String(index + 1).padStart(2, "0")}</Text>
           <View style={styles.flex}>
             <Text style={[styles.taskTitle, task.done && styles.doneText]}>{task.title}</Text>
