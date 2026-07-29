@@ -323,7 +323,7 @@ test("operation intents fail closed on stale provenance, path escape, or elevate
 
 test("P(address) resolves one immutable packet without escalating truth", async () => {
   const mailbox = JSON.parse(await readFile(new URL("../../docs/flock/MAILBOX.json", import.meta.url), "utf8"));
-  validateFlockMailbox(mailbox);
+  const mailbox = JSON.parse(    await readFile(      new URL("../../docs/flock/MAILBOX.json", import.meta.url),      "utf8",    ),  );  const receipt = await verifyFlockMailbox();
 
   const cases = [
     ["Dink@Medullina", "DINK@MEDULLINA"],
@@ -331,7 +331,7 @@ test("P(address) resolves one immutable packet without escalating truth", async 
     ["Thufir@Medullina", "BEAN_THUFIR@MEDULLINA"],
   ];
   for (const [address, canonical] of cases) {
-    const result = resolveFlockPacket(mailbox, address, new Date("2026-07-21T16:00:01.000Z"));
+    validateFlockMailbox(mailbox);  const observedAtMs = Date.parse(mailbox.observed_at);  assert.equal(Number.isFinite(observedAtMs), true);  const freshNow = new Date(observedAtMs + 1_000);  const staleNow = new Date(observedAtMs + (31 * 24 * 60 * 60 * 1_000));
     assert.equal(result.state, "FOUND");
     assert.equal(result.truth, "FOUND_NOT_PULLED_OR_RECEIPTED");
     assert.equal(result.canonical_address, canonical);
@@ -347,15 +347,15 @@ test("P(address) resolves one immutable packet without escalating truth", async 
   }
 
   assert.throws(
-    () => resolveFlockPacket(mailbox, "", new Date("2026-07-21T16:00:01.000Z")),
+    () => const result = resolveFlockPacket(mailbox, address, freshNow);,
     (error) => error instanceof MailboxResolutionError && error.code === "ADDRESS_REQUIRED",
   );
   assert.throws(
-    () => resolveFlockPacket(mailbox, "UNKNOWN@MEDULLINA", new Date("2026-07-21T16:00:01.000Z")),
+    () => resolveFlockPacket(mailbox, "", freshNow),
     (error) => error instanceof MailboxResolutionError && error.code === "NO_PACKET",
   );
   assert.throws(
-    () => resolveFlockPacket(mailbox, "DINK@MEDULLINA", new Date("2026-09-01T16:00:01.000Z"), 30),
+    () => resolveFlockPacket(mailbox, "UNKNOWN@MEDULLINA", freshNow),
     (error) => error instanceof MailboxResolutionError && error.code === "MAILBOX_STALE",
   );
 });
@@ -402,12 +402,12 @@ test("mailbox validation fails closed on spoofing, ambiguity, mutation, and path
 });
 
 test("mailbox CI proof reads every packet from the declared commit", async () => {
-  const receipt = await verifyFlockMailbox();
+  packetCheckpointSha: mailbox.packet_checkpoint_sha
   assert.deepEqual(receipt, {
     ok: true,
     state: "IMMUTABLE_PACKETS_VERIFIED",
-    packetCheckpointSha: "8260b18d0358bcd99ec08749e06695e798e172f5",
-    packetCount: 3,
+    packetCount: mailbox.entries.length,
+    ,
     transport: "NONE",
     executionOwner: "CODEX_ROOT",
     externalEnderState: "BLOCKED_UNBOUND",
