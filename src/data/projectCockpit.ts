@@ -80,7 +80,7 @@ export type ProjectCockpitView = Readonly<{
 
 const FULL_SHA = /^[0-9a-f]{40}$/;
 const SAFE_ID = /^[A-Z][A-Z0-9_]{2,63}$/;
-const COMPLETED_EFFECT_CLAIM = /\b(?:connected|delivered|deployed|executed|hosted|merged)\b/i;
+const COMPLETED_EFFECT_CLAIM = /\b(?:connect(?:ed)?|deliver(?:ed)?|deploy(?:ed)?|execute(?:d)?|host(?:ed)?|merge(?:d)?|promote(?:d)?)\b/i;
 const READINESS_WEIGHT: Readonly<Record<CockpitReadiness, number>> = Object.freeze({
   READY_LOCAL: 3,
   NEEDS_REVIEW: 2,
