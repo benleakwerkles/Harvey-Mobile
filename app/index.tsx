@@ -3,6 +3,7 @@ import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "rea
 
 import { CommandBoard } from "../src/components/CommandBoard";
 import { DailyMissionCard } from "../src/components/DailyMissionCard";
+import { FieldBriefCard } from "../src/components/FieldBriefCard";
 import { EvidenceHub } from "../src/components/EvidenceHub";
 import { OperationsHub } from "../src/components/OperationsHub";
 import { QuickCapture, type SessionCapture } from "../src/components/QuickCapture";
@@ -18,6 +19,7 @@ import { C7_C12_CHECKPOINTS, createConsolidatedCycleReceipt } from "../src/data/
 import { getResilienceFreshnessView } from "../src/data/resilienceFreshness";
 import { getPromotionReadinessView } from "../src/data/promotionReadiness";
 import { acknowledgeDailyMission, advanceDailyMissionFocus, createDailyMissionSession, getDailyMissionView } from "../src/data/dailyMission";
+import { advanceFieldBriefFocus, getFieldBriefView, resetFieldBriefSession, reviewFieldBriefItem } from "../src/data/fieldBrief";
 import { createOperationIntent, type OperationActionId, type OperationIntentReceipt } from "../src/data/operationIntent";
 import { PROJECT_COCKPIT_SNAPSHOT, getProjectCockpitView } from "../src/data/projectCockpit";
 import { getProjectSnapshotView, type ProjectSnapshot } from "../src/data/projectSnapshot";
@@ -61,8 +63,11 @@ export default function HarveyHome() {
   const dailyMissionNow = useMemo(() => evidenceFreshness.checkedAt ? new Date(evidenceFreshness.checkedAt) : new Date(Number.NaN), [evidenceFreshness.checkedAt]);
   const promotionReadiness = useMemo(() => getPromotionReadinessView({ evidenceBundle, buildIdentity: BUILD_IDENTITY, now: dailyMissionNow }), [dailyMissionNow, evidenceBundle]);
   const dailyMission = useMemo(() => getDailyMissionView({ buildQueue, cockpit, evidenceFreshness, promotionReadiness, now: dailyMissionNow }), [buildQueue, cockpit, dailyMissionNow, evidenceFreshness, promotionReadiness]);
+  const fieldBrief = useMemo(() => getFieldBriefView({ dailyMission, evidenceFreshness, promotionReadiness, buildIdentity: BUILD_IDENTITY, now: dailyMissionNow }), [dailyMission, dailyMissionNow, evidenceFreshness, promotionReadiness]);
   const [dailyMissionSession, setDailyMissionSession] = useState(() => createDailyMissionSession(dailyMission));
   useEffect(() => setDailyMissionSession(createDailyMissionSession(dailyMission)), [dailyMission]);
+  const [fieldBriefSession, setFieldBriefSession] = useState(() => resetFieldBriefSession(fieldBrief));
+  useEffect(() => setFieldBriefSession(resetFieldBriefSession(fieldBrief)), [fieldBrief.identityKey]);
   const cycleReceipt = useMemo(() => createConsolidatedCycleReceipt({ sourcePath: "docs/flock/packets/F_DINK_CONSOLIDATED_RECEIPT_MODEL_20260729_C12_B.md", sourceSha: "a56cd9daff46fdbb3477fa38de1dd3e307d00f31", createdAt: new Date(), cycles: C7_C12_CHECKPOINTS }), []);
 
   const addBuildTask = (title: string, priority: BuildQueuePriority) => {
@@ -104,6 +109,8 @@ export default function HarveyHome() {
 
   const acknowledgeMission = (missionId: string) => setDailyMissionSession((current) => acknowledgeDailyMission(dailyMission, current, missionId));
   const advanceMissionFocus = () => setDailyMissionSession((current) => advanceDailyMissionFocus(dailyMission, current));
+  const reviewBriefItem = (itemId: string) => setFieldBriefSession((current) => reviewFieldBriefItem(fieldBrief, current, itemId));
+  const advanceBriefFocus = () => setFieldBriefSession((current) => advanceFieldBriefFocus(fieldBrief, current));
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -128,6 +135,7 @@ export default function HarveyHome() {
         {mode === "Home" ? (
           <>
             <DailyMissionCard onAcknowledge={acknowledgeMission} onAdvanceFocus={advanceMissionFocus} session={dailyMissionSession} view={dailyMission} />
+            <FieldBriefCard onAdvanceFocus={advanceBriefFocus} onReview={reviewBriefItem} session={fieldBriefSession} view={fieldBrief} />
             <CommandBoard buildIdentity={BUILD_IDENTITY} cockpit={cockpit} onAddTask={addBuildTask} onAdvanceTask={advanceBuildTask} onReprioritizeTask={reprioritizeBuildTask} queue={buildQueue} snapshot={snapshot} variant="home" />
             <View style={styles.stats}>
               <View style={styles.stat}><Text style={styles.statValue}>{buildQueue.openCount}</Text><Text style={styles.small}>Open moves</Text></View>
