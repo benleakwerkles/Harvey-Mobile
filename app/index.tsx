@@ -9,15 +9,11 @@ import { BUILD_IDENTITY } from "../src/data/buildIdentity";
 import { CLOUD_PROOF_SNAPSHOT, getCloudProofView } from "../src/data/cloudProofSnapshot";
 import { FLOCK_RELAY_SNAPSHOT, getFlockRelayView } from "../src/data/flockRelaySnapshot";
 import { createCaptureDraftReceipt, type CaptureDraftReceipt } from "../src/data/captureDraft";
-import {
-  createOperationIntent,
-  type OperationActionId,
-  type OperationIntentReceipt,
-} from "../src/data/operationIntent";
+import { createOperationIntent, type OperationActionId, type OperationIntentReceipt } from "../src/data/operationIntent";
+import { PROJECT_COCKPIT_SNAPSHOT, getProjectCockpitView } from "../src/data/projectCockpit";
 import { getProjectSnapshotView, type ProjectSnapshot } from "../src/data/projectSnapshot";
 
 type Mode = "Home" | "Build" | "Operate" | "Capture" | "Evidence";
-
 const MODES = ["Home", "Build", "Operate", "Capture", "Evidence"] as const;
 
 const SNAPSHOT: ProjectSnapshot = Object.freeze({
@@ -46,11 +42,10 @@ export default function HarveyHome() {
   const snapshot = useMemo(() => getProjectSnapshotView(SNAPSHOT, new Date()), []);
   const relay = useMemo(() => getFlockRelayView(FLOCK_RELAY_SNAPSHOT, new Date()), []);
   const cloudProof = useMemo(() => getCloudProofView(CLOUD_PROOF_SNAPSHOT), []);
+  const cockpit = useMemo(() => getProjectCockpitView(PROJECT_COCKPIT_SNAPSHOT, new Date()), []);
 
   const toggleTask = (taskId: string) => {
-    setTasks((current) =>
-      current.map((task) => (task.id === taskId ? { ...task, done: !task.done } : task)),
-    );
+    setTasks((current) => current.map((task) => (task.id === taskId ? { ...task, done: !task.done } : task)));
   };
 
   const changeDraft = (value: string) => {
@@ -64,31 +59,19 @@ export default function HarveyHome() {
       setCaptureError(result.message);
       return;
     }
-
     const body = draft.trim();
-    setCaptures((current) => [
-      {
-        id: result.receipt.requestId,
-        body,
-        time: new Date(result.receipt.createdAt).toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        }),
-      },
-      ...current,
-    ]);
+    setCaptures((current) => [{
+      id: result.receipt.requestId,
+      body,
+      time: new Date(result.receipt.createdAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+    }, ...current]);
     setReceipt(result.receipt);
     setDraft("");
     setCaptureError(null);
   };
 
   const createLocalOperationReceipt = (actionId: OperationActionId) => {
-    setOperationReceipt(createOperationIntent({
-      actionId,
-      sourcePath: SNAPSHOT.sourcePath,
-      sourceSha: SNAPSHOT.sourceSha,
-      now: new Date(),
-    }));
+    setOperationReceipt(createOperationIntent({ actionId, sourcePath: SNAPSHOT.sourcePath, sourceSha: SNAPSHOT.sourceSha, now: new Date() }));
   };
 
   return (
@@ -101,20 +84,11 @@ export default function HarveyHome() {
           </View>
           <Text style={styles.snapshotPill}>SNAPSHOT</Text>
         </View>
-
-        <Text style={styles.subtitle}>
-          A phone-first sandbox for moving builds without manufacturing live, saved, delivered, or executed claims.
-        </Text>
+        <Text style={styles.subtitle}>A phone-first sandbox for moving builds without manufacturing live, saved, delivered, or executed claims.</Text>
 
         <View accessibilityRole="tablist" style={styles.nav}>
           {MODES.map((item) => (
-            <Pressable
-              accessibilityRole="tab"
-              accessibilityState={{ selected: mode === item }}
-              key={item}
-              onPress={() => setMode(item)}
-              style={[styles.navButton, mode === item && styles.navActive]}
-            >
+            <Pressable accessibilityRole="tab" accessibilityState={{ selected: mode === item }} key={item} onPress={() => setMode(item)} style={[styles.navButton, mode === item && styles.navActive]}>
               <Text style={[styles.navLabel, mode === item && styles.navLabelActive]}>{item}</Text>
             </Pressable>
           ))}
@@ -122,54 +96,18 @@ export default function HarveyHome() {
 
         {mode === "Home" ? (
           <>
-            <CommandBoard buildIdentity={BUILD_IDENTITY} snapshot={snapshot} tasks={tasks} variant="home" onToggleTask={toggleTask} />
+            <CommandBoard buildIdentity={BUILD_IDENTITY} cockpit={cockpit} snapshot={snapshot} tasks={tasks} variant="home" onToggleTask={toggleTask} />
             <View style={styles.stats}>
-              <View style={styles.stat}>
-                <Text style={styles.statValue}>{tasks.filter((task) => !task.done).length}</Text>
-                <Text style={styles.small}>Open moves</Text>
-              </View>
-              <View style={styles.stat}>
-                <Text style={styles.captureCount}>{captures.length}</Text>
-                <Text style={styles.small}>Session captures</Text>
-              </View>
+              <View style={styles.stat}><Text style={styles.statValue}>{tasks.filter((task) => !task.done).length}</Text><Text style={styles.small}>Open moves</Text></View>
+              <View style={styles.stat}><Text style={styles.captureCount}>{captures.length}</Text><Text style={styles.small}>Session captures</Text></View>
             </View>
           </>
         ) : null}
 
-        {mode === "Build" ? (
-          <CommandBoard buildIdentity={BUILD_IDENTITY} snapshot={snapshot} tasks={tasks} variant="build" onToggleTask={toggleTask} />
-        ) : null}
-
-        {mode === "Operate" ? (
-          <OperationsHub
-            onClearIntent={() => setOperationReceipt(null)}
-            onCreateIntent={createLocalOperationReceipt}
-            receipt={operationReceipt}
-            sourcePath={SNAPSHOT.sourcePath}
-            sourceSha={SNAPSHOT.sourceSha}
-          />
-        ) : null}
-
-        {mode === "Capture" ? (
-          <QuickCapture
-            captures={captures}
-            draft={draft}
-            error={captureError}
-            onClearReceipt={() => setReceipt(null)}
-            onCreateReceipt={createReceipt}
-            onDraftChange={changeDraft}
-            receipt={receipt}
-          />
-        ) : null}
-
-        {mode === "Evidence" ? (
-          <EvidenceHub
-            buildIdentity={BUILD_IDENTITY}
-            cloudProof={cloudProof}
-            operationReceipt={operationReceipt}
-            relay={relay}
-          />
-        ) : null}
+        {mode === "Build" ? <CommandBoard buildIdentity={BUILD_IDENTITY} cockpit={cockpit} snapshot={snapshot} tasks={tasks} variant="build" onToggleTask={toggleTask} /> : null}
+        {mode === "Operate" ? <OperationsHub onClearIntent={() => setOperationReceipt(null)} onCreateIntent={createLocalOperationReceipt} receipt={operationReceipt} sourcePath={SNAPSHOT.sourcePath} sourceSha={SNAPSHOT.sourceSha} /> : null}
+        {mode === "Capture" ? <QuickCapture captures={captures} draft={draft} error={captureError} onClearReceipt={() => setReceipt(null)} onCreateReceipt={createReceipt} onDraftChange={changeDraft} receipt={receipt} /> : null}
+        {mode === "Evidence" ? <EvidenceHub buildIdentity={BUILD_IDENTITY} cloudProof={cloudProof} operationReceipt={operationReceipt} relay={relay} /> : null}
 
         <Text style={styles.footer}>SANDBOX · BENLEAKWERKLES/HARVEY-MOBILE · NOT CANON</Text>
       </ScrollView>
