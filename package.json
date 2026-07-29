@@ -8,7 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test:contracts": "node --experimental-strip-types --test tests/contracts/contracts.test.mjs tests/contracts/flock-network.test.mjs tests/contracts/project-cockpit.test.mjs tests/contracts/capture-triage.test.mjs tests/contracts/build-queue.test.mjs tests/contracts/evidence-bundle.test.mjs tests/contracts/promotion-readiness.test.mjs tests/contracts/resilience-source-audit.test.mjs tests/contracts/daily-mission.test.mjs",
+    "test:contracts": "node --experimental-strip-types --test tests/contracts/contracts.test.mjs tests/contracts/flock-network.test.mjs tests/contracts/project-cockpit.test.mjs tests/contracts/capture-triage.test.mjs tests/contracts/build-queue.test.mjs tests/contracts/evidence-bundle.test.mjs tests/contracts/promotion-readiness.test.mjs tests/contracts/resilience-source-audit.test.mjs tests/contracts/daily-mission.test.mjs tests/contracts/field-brief.test.mjs",
     "typecheck": "tsc --noEmit",
     "export:android": "expo export --platform android --output-dir dist/android",
     "export:web": "expo export --platform web --output-dir dist/web",
