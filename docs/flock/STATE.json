@@ -148,9 +148,31 @@
       "state": "RECEIPTED",
       "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/8260b18d0358bcd99ec08749e06695e798e172f5/docs/flock/packets/F_BEAN_THUFIR_HARVEY_MOBILE_MAILBOX_AUDIT_20260721_C5.md",
       "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260721_C5.md"
+    },
+    {
+      "packet_id": "F_DINK_HARVEY_MOBILE_NETWORK_INGRESS_20260729_C6",
+      "address": "DINK@MEDULLINA",
+      "state": "RECEIPTED",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a/docs/flock/packets/F_DINK_HARVEY_MOBILE_NETWORK_INGRESS_20260729_C6.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260729_C6.md"
+    },
+    {
+      "packet_id": "F_CURSOR_ENDER_HARVEY_MOBILE_NETWORK_PEER_UX_20260729_C6",
+      "address": "CURSOR_ENDER_DOOZER@MEDULLINA",
+      "state": "RECEIPTED_INTERNAL_ROLE_AGENT",
+      "external_ender_state": "BLOCKED_UNBOUND",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a/docs/flock/packets/F_CURSOR_ENDER_HARVEY_MOBILE_NETWORK_PEER_UX_20260729_C6.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260729_C6.md"
+    },
+    {
+      "packet_id": "F_BEAN_THUFIR_HARVEY_MOBILE_NETWORK_TRUST_AUDIT_20260729_C6",
+      "address": "BEAN_THUFIR@MEDULLINA",
+      "state": "RECEIPTED",
+      "public_pull_url": "https://raw.githubusercontent.com/benleakwerkles/Harvey-Mobile/b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a/docs/flock/packets/F_BEAN_THUFIR_HARVEY_MOBILE_NETWORK_TRUST_AUDIT_20260729_C6.md",
+      "receipt_path": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260729_C6.md"
     }
   ],
-  "proof_boundary": "Cycle-five V/P/G is receipted with a deterministic cloud mailbox, immutable packet verification, fail-closed address resolution, provenance-first Relay UI, and successful SHA-scoped sandbox artifacts. The mailbox remains PENDING_PR_MERGE until PR #3 reaches main. Real external Ender/Claude remains BLOCKED_UNBOUND. These receipts prove neither live dispatch, canon, approval, merge, deployment, hosting, nor receiver delivery.",
+  "proof_boundary": "Cycle-six V/P/G is receipted with Handeye-owned implementation, root review/integration, an immutable network-inbox contract, fail-closed invitation resolution, a truthful phone-first Network/Peers surface, hostile trust contracts, and successful SHA-scoped Android/web sandbox artifacts. No authenticated Swanson@Doss invitation was observed; the inbox remains UNOBSERVED with transport NONE. PR #3 remains draft and PENDING_PR_MERGE. These receipts prove neither external delivery, canon write, approval, merge, deployment, nor hosting.",
   "cycle_three": {
     "state": "SANDBOX_G_RECEIPTED",
     "v_checkpoint_sha": "91d9cfbe5b3b9a6ba390382d51183277bf5b5ce9",
@@ -264,5 +286,51 @@
     "deployed": false,
     "hosted": false,
     "execution_receipt": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260721_C5.md"
+  },
+  "cycle_six": {
+    "state": "SANDBOX_G_RECEIPTED",
+    "v_checkpoint_sha": "b809adf0c5ff45e8f7d9cd44d9db8f52af26c40a",
+    "implementation_sha": "389c30f43071efe5e7420da951504bbaf4048cbb",
+    "pr_build_tree_sha": "9da51ee358aa51e968a1abf3390b47149096027b",
+    "work_mode": "CLOUD_ONLY",
+    "execution_owner": "CODEX_ROOT",
+    "handeye_operating_contract": "docs/flock/HANDEYE_OPERATING_CONTRACT.md",
+    "pull_receipts": {
+      "dink": "READ_ONLY_ROLE_AGENT_RECEIPTED",
+      "cursor_ender": "RECEIPTED_INTERNAL_ROLE_AGENT",
+      "bean_thufir": "READ_ONLY_ROLE_AGENT_RECEIPTED"
+    },
+    "network_inbox": {
+      "path": "docs/flock/NETWORK_INBOX.json",
+      "state": "UNOBSERVED",
+      "truth": "NO_AUTHENTICATED_SWANSON_INVITATION_OBSERVED",
+      "expected_sender": "SWANSON@DOSS",
+      "receiver": "DINK@MEDULLINA",
+      "transport": "NONE",
+      "invitation_count": 0
+    },
+    "verification_run_id": 30458773396,
+    "verification_conclusion": "success",
+    "behavior_contracts": "30/30",
+    "android_artifact": {
+      "id": 8726698433,
+      "name": "harvey-mobile-android-9da51ee358aa51e968a1abf3390b47149096027b",
+      "digest": "sha256:02d5f448a524cc322d2513fd2e05067a4e0ebf2b18901dd11e8b93c07be17d0d",
+      "expires_at": "2026-08-05T14:02:09Z"
+    },
+    "web_artifact": {
+      "id": 8726699295,
+      "name": "harvey-mobile-web-9da51ee358aa51e968a1abf3390b47149096027b",
+      "digest": "sha256:b276d6d0eebb3dae9e554c44b30af304d74ba6c6fe6f7afdd4626f3b5b7b16a6",
+      "expires_at": "2026-08-05T14:02:10Z",
+      "truth": "DOWNLOADABLE_BUILD_ARTIFACT_NOT_LIVE"
+    },
+    "external_ender_state": "BLOCKED_UNBOUND",
+    "promotion_approval": "PENDING",
+    "canon_written": false,
+    "merged": false,
+    "deployed": false,
+    "hosted": false,
+    "execution_receipt": "docs/flock/receipts/R_CODEX_ROOT_HARVEY_MOBILE_VPG_20260729_C6.md"
   }
 }
