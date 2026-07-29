@@ -5,10 +5,12 @@ import { CommandBoard, type BuildTask } from "../src/components/CommandBoard";
 import { EvidenceHub } from "../src/components/EvidenceHub";
 import { OperationsHub } from "../src/components/OperationsHub";
 import { QuickCapture, type SessionCapture } from "../src/components/QuickCapture";
+import type { CaptureDraftMetadata } from "../src/components/CaptureTriageBar";
 import { BUILD_IDENTITY } from "../src/data/buildIdentity";
 import { CLOUD_PROOF_SNAPSHOT, getCloudProofView } from "../src/data/cloudProofSnapshot";
 import { FLOCK_RELAY_SNAPSHOT, getFlockRelayView } from "../src/data/flockRelaySnapshot";
 import { createCaptureDraftReceipt, type CaptureDraftReceipt } from "../src/data/captureDraft";
+import { advanceCaptureTriageStatus, createCaptureTriageItem, type CaptureTriageItem } from "../src/data/captureTriage";
 import { createOperationIntent, type OperationActionId, type OperationIntentReceipt } from "../src/data/operationIntent";
 import { PROJECT_COCKPIT_SNAPSHOT, getProjectCockpitView } from "../src/data/projectCockpit";
 import { getProjectSnapshotView, type ProjectSnapshot } from "../src/data/projectSnapshot";
@@ -36,6 +38,7 @@ export default function HarveyHome() {
   const [tasks, setTasks] = useState<readonly BuildTask[]>(STARTING_TASKS);
   const [draft, setDraft] = useState("");
   const [captures, setCaptures] = useState<readonly SessionCapture[]>([]);
+  const [triageItems, setTriageItems] = useState<readonly CaptureTriageItem[]>([]);
   const [receipt, setReceipt] = useState<CaptureDraftReceipt | null>(null);
   const [captureError, setCaptureError] = useState<string | null>(null);
   const [operationReceipt, setOperationReceipt] = useState<OperationIntentReceipt | null>(null);
@@ -53,7 +56,7 @@ export default function HarveyHome() {
     setCaptureError(null);
   };
 
-  const createReceipt = () => {
+  const createReceipt = (metadata: CaptureDraftMetadata) => {
     const result = createCaptureDraftReceipt(draft, new Date());
     if (!result.ok) {
       setCaptureError(result.message);
@@ -65,9 +68,14 @@ export default function HarveyHome() {
       body,
       time: new Date(result.receipt.createdAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
     }, ...current]);
+    setTriageItems((current) => [createCaptureTriageItem({ receipt: result.receipt, category: metadata.category, priority: metadata.priority }), ...current]);
     setReceipt(result.receipt);
     setDraft("");
     setCaptureError(null);
+  };
+
+  const advanceTriage = (triageId: string) => {
+    setTriageItems((current) => current.map((item) => item.id === triageId ? advanceCaptureTriageStatus(item) : item));
   };
 
   const createLocalOperationReceipt = (actionId: OperationActionId) => {
@@ -106,7 +114,7 @@ export default function HarveyHome() {
 
         {mode === "Build" ? <CommandBoard buildIdentity={BUILD_IDENTITY} cockpit={cockpit} snapshot={snapshot} tasks={tasks} variant="build" onToggleTask={toggleTask} /> : null}
         {mode === "Operate" ? <OperationsHub onClearIntent={() => setOperationReceipt(null)} onCreateIntent={createLocalOperationReceipt} receipt={operationReceipt} sourcePath={SNAPSHOT.sourcePath} sourceSha={SNAPSHOT.sourceSha} /> : null}
-        {mode === "Capture" ? <QuickCapture captures={captures} draft={draft} error={captureError} onClearReceipt={() => setReceipt(null)} onCreateReceipt={createReceipt} onDraftChange={changeDraft} receipt={receipt} /> : null}
+        {mode === "Capture" ? <QuickCapture captures={captures} draft={draft} error={captureError} onAdvanceTriage={advanceTriage} onClearReceipt={() => setReceipt(null)} onCreateReceipt={createReceipt} onDraftChange={changeDraft} receipt={receipt} triageItems={triageItems} /> : null}
         {mode === "Evidence" ? <EvidenceHub buildIdentity={BUILD_IDENTITY} cloudProof={cloudProof} operationReceipt={operationReceipt} relay={relay} /> : null}
 
         <Text style={styles.footer}>SANDBOX · BENLEAKWERKLES/HARVEY-MOBILE · NOT CANON</Text>
